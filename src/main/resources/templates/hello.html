@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+<form th:action="@{/hello}" method="get" id="form">
+    <div class="row">
+        <span>hello</span>
+        <span id="name" th:text="${name}"></span>
+    </div>
+    <div class="row" style="margin-top: 10px">
+        <label for="nameInput">Name : </label>
+        <input type="text" id="nameInput">
+        <button type="button" onclick="initName()">submit</button>
+    </div>
+</form>
+    <script th:inline="javascript">
+        const initName = () => {
+            let $nameInput = $('#nameInput');
+            const formElement = document.getElementById('form');
+            let formData = new FormData();
+            formData.append('name', $nameInput.val());
+            fetch((/*[[@{/api/hello}]]*/''), {
+                method: "POST",
+                body: formData
+            }).then(formElement.submit());
+        }
+    </script>
+</body>
+</html>
