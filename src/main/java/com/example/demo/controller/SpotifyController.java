@@ -117,14 +117,6 @@ public class SpotifyController {
     }
 
 
-//    @RequestMapping("/useToken")
-//    public String useToken(HttpSession session, Model model) {
-//        String token = (String) session.getAttribute("spotifyToken");
-//        model.addAttribute("token", token);
-//        return "showToken"; // หน้า thymeleaf แสดง token
-//    }
-
-
     private String generateRandomString(int length) {
         SecureRandom secureRandom = new SecureRandom();
         byte[] bytes = new byte[length];

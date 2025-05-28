@@ -1,0 +1,71 @@
+้ html,body {
+    /*background-color: #252424;*/
+    background: linear-gradient(to bottom right, #252424 0%, #262a26 70% ,#28a745 100%  );
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui;
+    font-weight: bold;
+    height: 100vh;
+
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: system-ui;
+    font-weight: bold;
+
+}
+
+
+/*tag a*/
+a:hover {
+    color: #1DB954;
+}
+
+a:link{
+    color:#FFFFFF;
+    text-decoration: none;
+}
+
+a:visited{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between; /* 👈 แบ่งซ้ายขวา */
+    align-items: center;
+    flex-direction: row;
+    /*gap: 1rem;*/
+    background-color: black;
+    padding: 10px 25px;
+    margin: 0px;
+    border-radius: 0px 0px 50px 0px;
+
+}
+
+.left,
+.right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.middle {
+    display: flex;
+    flex-direction: column; /*ให้ลูกเรียงตามแนวcol*/
+    justify-content: center; /*กลางแนวนอน*/
+    align-items: center; /*กลางแนวตั้ง*/
+    height: 100vh;
+}
+
+img{
+    border-radius: 100px 100px 100px 100px;
+}

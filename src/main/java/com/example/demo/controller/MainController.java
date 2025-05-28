@@ -17,4 +17,12 @@ public class MainController {
         model.addAttribute("name", session.getAttribute("name") != null ? session.getAttribute("name") : "World");
         return "hello";
     }
+
+    @GetMapping("/topSong")
+    public String showProfile(Model model,HttpSession session) {
+        // add attributes to model
+        String token = (String) session.getAttribute("token");
+        return "topSong";
+    }
+
 }

@@ -3,61 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h1>Spotify User Profile</h1>
-    <div th:if="${error}">
+<div th:replace="index :: header"/>
+
+<h1>Spotify User Profile</h1>
+<div th:if="${error}">
     <p th:text="${error}" style="color: red;"></p>
-    </div>
+</div>
 
-    <div th:if="${user == null}">
-        <p style="color: red;">Please login</p>
-    </div>
-    <div th:if="${user != null}">
-        <img th:src="${user.images[0].url}" alt="User Image" width="200" />
-        <p><strong>Display Name:</strong> <span th:text="${user.display_name}"></span></p>
-        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-<!--        <p><strong>ID:</strong> <span th:text="${user.id}"></span></p>-->
-        <p><strong>Country:</strong> <span th:text="${user.country}"></span></p>
-    </div>
+<div th:if="${user == null}">
+    <p style="color: red;">Please login</p>
+</div>
+<div th:if="${user != null}">
+    <img th:src="${user.images[0].url}" alt="User Image" width="200"/>
+    <p><strong>Display Name:</strong> <span th:text="${user.display_name}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    <p><strong>Country:</strong> <span th:text="${user.country}"></span></p>
+</div>
 
-    <form id="form">
-        <lable for="typeinput">Choese your top song type</lable>
-        <select id="typeinput" name="type">
-            <option value="tracks">Tracks</option>
-            <option value="artist">Artists</option>
-        </select>
-
-        <label for="limitinput">limit songs:</label>
-        <input type="number" id="limitinput" name="limit" value="5" min="0" max="50"/>
-        <button type="button" onclick="getTopSong()">let's watch your top song</button>
-    </form>
+<a href="/topSong">
+    <button type="button" > TopSong Page</button>
+</a>
 
 
+<!--th:block th:replace th:layout:fragment-->
 
-    <script th:inline="javascript">
-        const getTopSong = () => {
-            const type = document.getElementById('typeinput').value;
-            const limit = document.getElementById('limitinput').value || 0;
-            const url = `https://api.spotify.com/v1/me/top/${type}?limit=${limit}`;
-            const token = /*[[${token}]]*/ 'default_token_if_null';
+<script th:inline="javascript">
+    const getTopSong = () => {
+        const type = document.getElementById('typeinput').value;
+        const limit = document.getElementById('limitinput').value || 0;
+        const url = `https://api.spotify.com/v1/me/top/${type}?limit=${limit}`;
+        const token = /*[[${token}]]*/ 'default_token_if_null';
 
-            fetch(url, {
-                method: "GET",
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
+        console.log("type :", type);
+        console.log("limit :", limit);
+        fetch(url, {
+            method: "GET",
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // ทำอย่างอื่น เช่น แสดงผลในหน้า
             })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    // ทำอย่างอื่น เช่น แสดงผลในหน้า
-                })
-                .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error));
 
-            console.log("type :",type);
-            console.log("limit :",limit);
-        }
-    </script>
+    }
+
+    $(() => {
+        console.log(/*[[${session.userData}]]*/ '')
+    })
+</script>
 </body>
 </html>

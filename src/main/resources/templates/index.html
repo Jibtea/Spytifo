@@ -3,8 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-ssssssssssssssssssssss
+<div th:fragment="header" class="header">
+    <div class="left">
+        <img src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png"
+             alt="spotifyLOGO" width="50px"/>
+        <p>Suport API by spotify</p>
+    </div>
+
+    <div class="right">
+    <th:block th:if="${session.userData!=null}">
+        <a href="/topSong" >TopList</a>
+        <a href="/profile" th:text="${session.userData.display_name}"></a>
+        <img th:src="${session.userData.images[0].url}" alt="User Image" width="50px" height="50px"/>
+        </a>
+    </th:block>
+
+    <th:block th:if="${session.userData==null}">
+        <a
+                href="/login"
+                style="display: inline-block;
+        margin: 0; padding: 0.3rem 0;
+        line-height: 1;
+        text-decoration: none;
+        "> Login</a>
+    </th:block>
+    </div>
+
+</div>
+<div class="middle">
+    <h1>Are you ready to find your top song on spoify</h1>
+    <a href="/login">
+        <button type="button">Let's Go</button>
+    </a>
+</div>
 </body>
 </html>
+
+
+<!--<script th:inline="javascript">-->
+<!--    const goLogin = () => {-->
+<!--        // ดึง origin เช่น https://example.com-->
+<!--        const baseUrl = window.location.origin;-->
+
+<!--        // สร้าง URL เต็ม-->
+<!--        const loginUrl = `${baseUrl}/login`;-->
+<!--        //-->
+<!--        // // เปิดหน้าต่างใหม่ขนาด 400x400 ที่ตำแหน่งซ้าย 600 บน 200-->
+<!--        // window.open(loginUrl, '_blank', 'width=400,height=400,top=200,left=600');-->
+<!--window.location.href = '/login';-->
+<!--        -->
+<!--    }-->
+<!--</script>-->
