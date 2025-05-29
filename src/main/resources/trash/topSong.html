@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!--<div th:replace="index :: header"/>-->
+<form th:action="@{/topSong}" id="form" method="post">
+    <!--<form id="form">-->
+    <lable for="typeinput">Choese your top song type</lable>
+    <select
+            id="typeinput"
+            name="type"
+            required
+            oninvalid="this.setCustomValidity('Please Select Query type')"
+            oninput="this.setCustomValidity('')"
+            onchange="updateType()"
+    >
+        <option value="" disabled selected hidden>-- Select Query Type --</option>
+        <option value="tracks">Tracks</option>
+        <option value="artists">Artists</option>
+    </select>
+
+    <label for="limitinput">limit songs:</label>
+    <input
+            type="limit"
+            id="limitinput"
+            name="limit"
+            min="1"
+            max="50"
+            required
+            oninvalid="this.setCustomValidity('Please input number between 1-50')"
+            oninput="this.setCustomValidity('')"
+
+    />
+    <button type="submit" id="button" onclick="getTopSong()">let's watch your top ...</button>
+</form>
+
+<div th:if="${Items != null}">
+
+    <th:block th:if="${type == 'tracks'}">
+        <ul>
+            <li th:each="song : ${Items}">
+                <img th:src="${song.album.images[0].url}" alt="album image" width="200"/>
+                <p><strong>Name:</strong> <span th:text="${song.name}"></span></p>
+                <p><strong>Artist:</strong>
+                    <span th:each="artists : ${song.artists}">
+                        <span th:text="${artists.name} "></span>
+                    </span>
+                </p>
+                <p><strong>Album:</strong> <span th:text="${song.album.name}"></span></p>
+                <p><a th:href="${song.external_urls.spotify}">Listen again</a></p>
+            </li>
+        </ul>
+
+    </th:block>
+
+    <th:block th:if="${type == 'artists'}">
+        <ul>
+            <li th:each=" artist: ${Items}">
+                <img th:src="${artist.images[0].url}" alt="User Image" width="200"/>
+                <p><strong>Name: </strong><span th:text="${artist.name}"></span></p>
+                <p><strong>Genres: </strong>
+                    <span th:each="genre:${artist.genres}">
+                    <span th:text="${genre}"></span>
+                </span>
+                </p>
+                <p><strong>Popularity: </strong><span th:text="${artist.popularity}"></span></p>
+                <p><a th:href="${artist.uri}">Listen again</a></p>
+            </li>
+        </ul>
+    </th:block>
+</div>
+
+<script th:inline="javaScript">
+    $(() => {
+        console.log(/*[[${Type}]]*/ '')
+        console.log(/*[[${Items}]]*/ '')
+    });
+
+    function updateType(){
+        const selectType = document.getElementById("typeinput").value;
+        const button = document.getElementById("button");
+        button.textContent = `Let's check your top ${selectType}`
+    }
+
+</script>
+</body>
+</html>

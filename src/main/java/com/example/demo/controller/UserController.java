@@ -50,43 +50,46 @@ public class UserController {
         return "profile";
     }
 
-    @PostMapping("/topSong")
-    public String UserGetTopSong(
-            HttpSession session,
-            Model model,
-            @RequestParam("limit") int limit,
-            @RequestParam("type") String type
-    ) {
-        String token = (String) session.getAttribute("spotifyToken");
-        Map<String, String> userData = (Map<String, String>) session.getAttribute("userData");
-        String id = userData.get("id");
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
+}
 
-        String Url = "https://api.spotify.com/v1/me/top/"+type+"?limit="+limit;
+/*
+@PostMapping("/topSong")
+public String UserGetTopSong(
+        HttpSession session,
+        Model model,
+        @RequestParam("limit") int limit,
+        @RequestParam("type") String type
+) {
+    String token = (String) session.getAttribute("spotifyToken");
+    Map<String, String> userData = (Map<String, String>) session.getAttribute("userData");
+    String id = userData.get("id");
+
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Bearer " + token);
+
+    String Url = "https://api.spotify.com/v1/me/top/"+type+"?limit="+limit;
 //ไว้ส่งขอapi
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = restTemplate.exchange(
+    HttpEntity<String> request = new HttpEntity<>(headers);
+    ResponseEntity<Map> response = restTemplate.exchange(
 //                "https://api.spotify.com/v1/me/top/artists?limit=5",
-                Url,
-                HttpMethod.GET,
-                request,
-                Map.class
-        );
+            Url,
+            HttpMethod.GET,
+            request,
+            Map.class
+    );
 
-        List<Map<String,Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
-        model.addAttribute("Items", items);
-        model.addAttribute("type", (String)type);
+    List<Map<String,Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
+    model.addAttribute("Items", items);
+    model.addAttribute("type", (String)type);
 
 //        model.addAttribute("TopSong", response.getBody());
 //        System.out.println(response.getBody());
 
-        return "topSong";
+    return "topSong";
 
-    }
+}*/
 
-}
 
 

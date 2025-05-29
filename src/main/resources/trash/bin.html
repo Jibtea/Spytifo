@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<section class="vh-100">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-12 col-xl-4">
+
+                <div class="card" style="border-radius: 15px;">
+                    <div class="card-body text-center">
+                        <div class="mt-3 mb-4">
+                            <img th:src="${user.images[0].url}" alt="User Image"
+                                 class="rounded-circle img-fluid" style="width: 100px;" />
+                        </div>
+                        <p><strong>Display Name:</strong></p>
+                        <h4 th:text="${user.display_name}" class="mb-2">Julie L. Arsenault</h4>
+                        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                        <p><strong>Country:</strong> <span th:text="${user.country}"></span></p>
+                        <a href="/topItem">
+                            <button type="button" > TopItem Page</button>
+                        </a>
+                        <div class="d-flex justify-content-between text-center mt-5 mb-2">
+                            <div>
+                                <p class="mb-2 h5">8471</p>
+                                <p class="text-muted mb-0">Wallets Balance</p>
+                            </div>
+                            <div class="px-3">
+                                <p class="mb-2 h5">8512</p>
+                                <p class="text-muted mb-0">Income amounts</p>
+                            </div>
+                            <div>
+                                <p class="mb-2 h5">4751</p>
+                                <p class="text-muted mb-0">Total Transactions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

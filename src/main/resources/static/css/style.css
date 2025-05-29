@@ -1,17 +1,20 @@
-้ html,body {
-    /*background-color: #252424;*/
-    background: linear-gradient(to bottom right, #252424 0%, #262a26 70% ,#28a745 100%  );
+้ html{
+    height: 100%;
+}
+body {
+    background-color: #252424;
     color: #FFFFFF;
     margin: 0;
     padding: 0;
     font-family: system-ui;
     font-weight: bold;
-    height: 100vh;
-
+    height: 100%;
 }
+/*background: linear-gradient(to bottom right, #252424 0%, #262a26 70% ,#28a745 100%  );*/
 
 button {
-    background-color: #28a745;
+    /*background-color: #28a745;*/
+    background-color: #f05080;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -22,6 +25,47 @@ button {
 
 }
 
+#form {
+    display: flex;
+    flex-direction: row;
+    max-width: 80vw;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid #ffb1c7;
+    border-radius: 10px;
+    background-color: #2a2629;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    gap: 1rem;
+    color: #f05080;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+select, input[type="limit"] {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background-color: #e17b99;
+    transition: border-color 0.3s;
+}
+
+select:focus, input:focus {
+    border-color: #ffb1c7;
+    outline: none;
+}
+
+
+button:hover {
+    background-color: #bf2d59;
+}
+
+.card{
+
+}
 
 /*tag a*/
 a:hover {
@@ -39,11 +83,14 @@ a:visited{
 }
 
 .header {
+    position: fixed;
+    top: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between; /* 👈 แบ่งซ้ายขวา */
     align-items: center;
     flex-direction: row;
-    /*gap: 1rem;*/
+    box-sizing: border-box;
     background-color: black;
     padding: 10px 25px;
     margin: 0px;
@@ -68,4 +115,8 @@ a:visited{
 
 img{
     border-radius: 100px 100px 100px 100px;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }

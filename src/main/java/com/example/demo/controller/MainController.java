@@ -19,10 +19,17 @@ public class MainController {
     }
 
     @GetMapping("/topSong")
-    public String showProfile(Model model,HttpSession session) {
+    public String showSong(Model model,HttpSession session) {
         // add attributes to model
         String token = (String) session.getAttribute("token");
         return "topSong";
+    }
+
+    @GetMapping("/topItem")
+    public String showList(Model model,HttpSession session) {
+        // add attributes to model
+        String token = (String) session.getAttribute("token");
+        return "topItem";
     }
 
 }
