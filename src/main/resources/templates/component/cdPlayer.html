@@ -1,10 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="cdPlayer">
+    <h4>CD player</h4>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Labrador_Retriever_portrait.jpg/1200px-Labrador_Retriever_portrait.jpg"
+         width="200">
+    <p id="trackSong"></p>
+    <!-- แถบเล่นเพลง -->
+    <div style="width: 100%; max-width: 400px;">
+        <input type="range" id="progressBar" value="0" min="0" step="1" style="width: 180px;" />
+        <div>
+            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+        </div>
+    </div>
 
-</body>
+    <button id="previous" onclick="buttonPreviousTrack()"><</button>
+    <button id="togglePlay" onclick="buttonTogglePlay()">play</button>
+    <button id="next" onclick="buttonNextTrack()">></button>
+</div>
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<script th:inline="javaScript">
+    let isReady = false;
+    window.onSpotifyWebPlaybackSDKReady = () => {
+        const token = /*[[${session.spotifyToken}]]*/ '';
+        const player = new Spotify.Player(
+            {
+                name: 'Web Playback SDK Quick Start Player',
+                getOAuthToken: cb => {
+                    cb(token);
+                },
+                volume: 0.5
+            });
+        // window.device_ids={device_id};
+
+        player.addListener('ready', ({device_id}) => {
+            console.log('Cd player ready for playing music', device_id);
+            transferPlayback(token, device_id);
+            window.player=player;
+            window.device_ids=device_id;
+        });
+
+
+        player.addListener('not_ready', ({deviceId}) => {
+            console.log('This ID has gone offline', deviceId);
+        })
+
+
+        player.connect().then(success => {
+            if (success) {
+                console.log('Connected!');
+                isReady=true;
+                window.player=player;
+            }
+        });
+
+        player.addListener('player_state_changed', state=> {
+            // console.log('Currently Playing', current_track);
+            // console.log('Position in Song', position);
+            // console.log('Duration of Song', duration);
+
+            const text = document.getElementById("trackSong");
+            if (text) {
+                text.textContent = `Now Playing ${state.track_window.current_track.name}`;
+            }
+
+            const playPause = document.getElementById("togglePlay");
+            // console.log(state);
+            if (state.paused) {
+                playPause.textContent = "play";
+            } else {
+                playPause.textContent = "pause";
+            }
+
+        });
+
+
+
+        window.buttonTogglePlay = function () {
+            player.togglePlay().then(() => {
+                console.log('playback');
+            });
+        }
+
+        window.buttonPreviousTrack = function () {
+            player.previousTrack().then(() => {
+                console.log('Set to previous track!');
+            });
+        }
+
+        window.buttonNextTrack = function () {
+            player.nextTrack().then(() => {
+                console.log('Let\'s go to next Track');
+            })
+        }
+
+
+    }
+
+
+    //connect player
+    function transferPlayback(token, deviceId) {
+        fetch('https://api.spotify.com/v1/me/player', {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(
+                {
+                    device_ids: [deviceId],
+                    play: true
+                })
+        });
+    }
+
+    //change tracks
+    const playTrack = (deviceId) => {
+        fetch(`/api/playTrack?deviceId=${encodeURIComponent(deviceId)}`, {
+            method: "POST"
+        })
+            .then(res => res.text())
+            .then(text => console.log("Response:", text))
+            .catch(err => console.error("Error:", err));
+    };
+
+
+
+    //==============setAnimation , interval============
+    // เรียกทุก 1 วินาทีเพื่ออัปเดต progress
+    setInterval(() => {
+        // console.log(window.player);
+        if (window.player&&isReady) {
+            player.getCurrentState().then(state => {
+            // console.log("callSetInterval");
+
+                if (!state) return;
+
+                const progressMs = state.position; // ตำแหน่งปัจจุบัน (ms)
+                const durationMs = state.duration; // ความยาวเพลงทั้งหมด (ms)
+
+                // แสดงบน progress bar
+                const progressBar = document.getElementById('progressBar');
+                progressBar.max = durationMs;
+                progressBar.value = progressMs;
+
+                // แสดงเวลา
+                document.getElementById('currentTime').textContent = formatTime(progressMs);
+                document.getElementById('totalTime').textContent = formatTime(durationMs);
+            });
+        }
+    }, 1000); // ทุก 1 วินาที
+
+    // แปลง ms เป็น mm:ss
+    function formatTime(ms) {
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    //=======ปรับเวลาเพลงจาจ้า=========
+    document.getElementById('progressBar').addEventListener('input',function(){
+        const newPosition = parseInt(this.value);
+        window.player.seek(newPosition).then(()=>{
+            console.log(`seeked to ${newPosition}`)
+        })
+    })
+
+
+
+
+    ////=======================trash===========================///
+    ////======check Did this account connect page นี้รึยังจ้ะหนู========
+/*
+    window.getStatePlayer = function () {
+        player.getCurrentState().then(state => {
+            if (!state) {
+                console.error('User is not playing music through the Web Playback SDK');
+                return;
+            }
+            var current_track = state.track_window.current_track;
+            var next_track = state.track_window.next_tracks[0];
+
+            console.log(state);
+            return state;
+        });
+    }
+*/
+
+
+
+</script>
+
 </html>

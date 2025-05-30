@@ -13,126 +13,122 @@
 <body>
 <!--<div th:replace="index :: header"/>-->
 <div layout:fragment="content">
-<form  id="form"  >
-    <!--<form id="form">-->
-    <label for="typeinput">Choese your top song type</label>
-    <select
-            id="typeinput"
-            name="type"
-            required
-            oninvalid="this.setCustomValidity('Please Select Query type')"
-            oninput="this.setCustomValidity('')"
-            onchange="updateType()"
-    >
-        <option value="" disabled selected hidden>-- Select Query Type --</option>
-        <option value="tracks">Tracks</option>
-        <option value="artists">Artists</option>
-    </select>
+    <form id="form">
+        <!--<form id="form">-->
+        <label for="typeinput">Choese your top song type</label>
+        <select
+                id="typeinput"
+                name="type"
+                required
+                oninvalid="this.setCustomValidity('Please Select Query type')"
+                oninput="this.setCustomValidity('')"
+                onchange="updateType()"
+        >
+            <option value="" disabled selected hidden>-- Select Query Type --</option>
+            <option value="tracks">Tracks</option>
+            <option value="artists">Artists</option>
+        </select>
 
-    <label for="limitinput">limit songs:</label>
-    <input
-            type="limit"
-            id="limitinput"
-            name="limit"
-            min="1"
-            max="50"
-            required
-            oninvalid="this.setCustomValidity('Please input number between 1-50')"
-            oninput="this.setCustomValidity('')"
+        <label for="limitinput">limit songs:</label>
+        <input
+                type="limit"
+                id="limitinput"
+                name="limit"
+                min="1"
+                max="50"
+                required
+                oninvalid="this.setCustomValidity('Please input number between 1-50')"
+                oninput="this.setCustomValidity('')"
 
-    />
-    <button type="button" id="button" onclick="getTopItem()">let's watch your top ...</button>
-</form>
+        />
+        <button type="button" id="button" onclick="getTopItem()">let's watch your top ...</button>
+    </form>
 
-<div id="items" class="d-flex flex-column justify-content-center align-items-center">
-    <p>Please choose query type</p>
-</div>
+    <div id="items" class="d-flex flex-column justify-content-center align-items-center">
+        <p>Please choose query type</p>
+    </div>
 
-<script th:inline="javaScript">
+    <script th:inline="javascript">
 
-    const getTopItem = () => {
-        const type = document.getElementById('typeinput').value;
-        const limit = document.getElementById('limitinput').value;
-        fetch(/*[[@{/api/topItem}]]*/'', {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                type: type,
-                limit: limit
+        const getTopItem = () => {
+            const type = document.getElementById('typeinput').value;
+            const limit = document.getElementById('limitinput').value;
+            fetch(/*[[@{/api/topItem}]]*/'', {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    type: type,
+                    limit: limit
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                const container = document.getElementById("items");
-                container.innerHTML = ""; // ล้างของเก่าออกก่อน
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const container = document.getElementById("items");
+                    container.innerHTML = ""; // ล้างของเก่าออกก่อน
 
-                if (type === 'artists') {
-                    data.forEach(artist => {
-                        const div = document.createElement("div");
-                        div.classList.add("text-center", "m-2","p-2");
+                    if (type === 'artists') {
+                        data.forEach(artist => {
+                            const div = document.createElement("div");
+                            div.classList.add("text-center", "m-2", "p-2");
 
-                        div.innerHTML =
-                            `
+                            div.innerHTML =
+                                `
                                 <img src="${artist.images[0].url}" alt="artist Image" width="200"/>
                                 <p><strong>Name: </strong><span>${artist.name}</span></p>
                                 <p><strong>Genres:</strong> ${artist.genres.join(' ')}</p>
                                 <p><strong>Popularity: </strong><span>${artist.popularity}</span></p>
                                 <p><a href="${artist.uri}">Listen again</a></p>
                        `;
-                        container.appendChild(div);
-                    });
-                } else {
-                    data.forEach(song => {
-                        const div = document.createElement("div");
-                        div.classList.add("text-center", "m-2","p-2");
+                            container.appendChild(div);
+                        });
+                    } else {
+                        data.forEach(song => {
+                            const div = document.createElement("div");
+                            div.classList.add("text-center", "m-2", "p-2");
 
-                        div.innerHTML =
-                            `
+                            div.innerHTML =
+                                `
                             <img src="${song.album.images[0].url}" alt="album image" width="200"/>
                             <p><strong>Name:</strong> <span>${song.name}</span></p>
                             <p><strong>Artist:</strong>${song.artists.map(artist => artist.name).join(', ')} </p>
                             <p><strong>Album:</strong> <span>${song.album.name}</span></p>
                             <p><a href="${song.external_urls.spotify}">Open in spotify</a></p>
+                            <button type="button" value="${song.uri}" onclick="collectThisTrack(this)" >Listen this song</button>
                             `
-                        ;
-                        container.appendChild(div);
-                    });
-                }
+                            ;
+                            container.appendChild(div);
+                        });
+                    }
 
-            })
-            .catch(error => console.error('Error : ', error));
-    }
+                })
+                .catch(error => console.error('Error : ', error));
+        }
 
-    const showArtist = (artist) => {
-        let html = '';
-        artists.forEach(artist => {
-            html +=
-                `
-              <div class"artist">
-                  <img src="${artist.images[0].url}" alt="artist Image" width="200"/>
-                  <p><strong>Name: </strong><span>${artist.name}</span></p>
-                  <p><strong>Genres:</strong> ${artist.genres.join(', ')}</p>
-                  <p><strong>Popularity: </strong><span>${artist.popularity}</span></p>
-                  <p><a href="${artist.uri}">Listen again</a></p>
-              </div>
-            `;
-        })
+        $(() => {
+            console.log(/*[[${Type}]]*/ '')
+            console.log(/*[[${Items}]]*/ '')
+        });
 
-        document.getElementById("items").innerHTML = html;
-    }
-    $(() => {
-        console.log(/*[[${Type}]]*/ '')
-        console.log(/*[[${Items}]]*/ '')
-    });
+        function updateType() {
+            const selectType = document.getElementById("typeinput").value;
+            const button = document.getElementById("button");
+            button.textContent = `Let's check your top ${selectType}`
+        }
 
-    function updateType() {
-        const selectType = document.getElementById("typeinput").value;
-        const button = document.getElementById("button");
-        button.textContent = `Let's check your top ${selectType}`
-    }
+        const collectThisTrack = (button) => {
+            const trackUrl = button.value;
+            const deviceId = window.device_ids;
+            console.log(trackUrl);
+            fetch(`/api/collectTrack?trackUrl=${trackUrl}&deviceId=${deviceId}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+            }).then(console.log("collected"))
+                .catch(error => console.error('Error : ', error));
+        }
 
-</script>
+
+    </script>
 </div>
 </body>
 </html>

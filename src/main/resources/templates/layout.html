@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
@@ -43,8 +42,8 @@
   <!-- เนื้อหาหน้าย่อยจะมาแทรกตรงนี้ -->
 </main>
 
-<!--<footer>-->
-<!--  <p>© 2025 Spotify API</p>-->
-<!--</footer>-->
+<footer>
+  <div th:replace="component/cdPlayer"></div>
+</footer>
 </body>
 </html>
