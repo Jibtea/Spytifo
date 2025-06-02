@@ -1,43 +1,79 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="cdPlayer">
-    <h4>CD player</h4>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Labrador_Retriever_portrait.jpg/1200px-Labrador_Retriever_portrait.jpg"
-         width="200">
-    <p id="trackSong"></p>
-    <!-- แถบเล่นเพลง -->
-    <div style="width: 100%; max-width: 400px;">
-        <input type="range" id="progressBar" value="0" min="0" step="1" style="width: 180px;" />
-        <div>
-            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+<link rel="stylesheet" th:href="@{/css/style.css}"/>
+<link rel="stylesheet" th:href="@{/css/cdPlayer.css}"/>
+<div th:fragment="cdPlayer" class="cd-player-bar">
+    <div id="cd" class="image-container">
+        <!-- ภาพพื้นหลังหรือภาพหลัก -->
+        <img src="https://png.pngtree.com/png-clipart/20230303/ourmid/pngtree-vinyl-records-png-image_6629914.png"
+             alt="Main Cover" class="main-image"
+        />
+
+        <!-- ภาพที่ทับด้านบน -->
+        <img id="trackImg"
+             src=""
+             class="overlay-image"
+        />
+    </div>
+<!-- ==========================================   -->
+    <div class="track-controler">
+        <p id="trackSong">No track playing</p>
+        <!-- แถบเล่นเพลง -->
+        <div class="controls">
+            <button class="btn-clear" id="previous" onclick="buttonPreviousTrack()"><</button>
+            <button class="btn-clear" style="width: 120px" id="togglePlay" onclick="buttonTogglePlay()">play</button>
+            <button class="btn-clear" id="next" onclick="buttonNextTrack()">></button>
+        </div>
+        <div style="width: 100%; max-width: 400px;" class="progress-section">
+            <input type="range" id="progressBar" value="0" min="0" step="1" />
+            <div>
+                <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+            </div>
         </div>
     </div>
+<!--  ===============================================  -->
+    <div class="track-next">
+        <p>next track</p>
+        <img id="nextTrackImg" url="https://img.icons8.com/ios11/512/F25081/spotify.png" width="80px" height="80px">
+        <p id="nextTrackName">name</p>
+    </div>
 
-    <button id="previous" onclick="buttonPreviousTrack()"><</button>
-    <button id="togglePlay" onclick="buttonTogglePlay()">play</button>
-    <button id="next" onclick="buttonNextTrack()">></button>
+
 </div>
+
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
 <script th:inline="javaScript">
     let isReady = false;
     window.onSpotifyWebPlaybackSDKReady = () => {
         const token = /*[[${session.spotifyToken}]]*/ '';
+        if (token == '') {
+            console.error("Spotify token is missing.");
+            return;
+        }
         const player = new Spotify.Player(
             {
-                name: 'Web Playback SDK Quick Start Player',
+                name: 'Spytifo',
                 getOAuthToken: cb => {
                     cb(token);
                 },
                 volume: 0.5
             });
+        player.connect().then(success => {
+            if (success) {
+                console.log('Connected!');
+                isReady = true;
+                window.player = player;
+            }
+        });
         // window.device_ids={device_id};
 
         player.addListener('ready', ({device_id}) => {
             console.log('Cd player ready for playing music', device_id);
             transferPlayback(token, device_id);
-            window.player=player;
-            window.device_ids=device_id;
+            window.player = player;
+            window.device_ids = device_id;
         });
 
 
@@ -46,34 +82,48 @@
         })
 
 
-        player.connect().then(success => {
-            if (success) {
-                console.log('Connected!');
-                isReady=true;
-                window.player=player;
-            }
-        });
-
-        player.addListener('player_state_changed', state=> {
-            // console.log('Currently Playing', current_track);
-            // console.log('Position in Song', position);
-            // console.log('Duration of Song', duration);
+        player.addListener('player_state_changed', state => {
+            const img = state?.track_window?.current_track?.album?.images[0]?.url||null;
+            const trackNext = state?.track_window?.next_tracks[0]||null;
+            const imgNext = trackNext?.album?.images[0]?.url||null;
+            const nameNext = trackNext?.name;
+            // console.log(trackNext);
 
             const text = document.getElementById("trackSong");
             if (text) {
-                text.textContent = `Now Playing ${state.track_window.current_track.name}`;
+                text.textContent = `${state.track_window.current_track.name}`;
             }
 
+            const trackImg = document.getElementById("trackImg");
+            if (trackImg) {
+                trackImg.src = img || "";
+            }
+
+            // next track
+            const nextTrackImg = document.getElementById("nextTrackImg");
+            const nextTrackName = document.getElementById("nextTrackName");
+
+            if(nextTrackImg&&nextTrackName&&imgNext!=null&&nameNext!=null){
+                nextTrackImg.src = imgNext;
+                nextTrackName.textContent=nameNext;
+            }else {
+                nextTrackImg.src = "https://img.icons8.com/ios11/512/F25081/spotify.png" ;
+                nextTrackName.textContent="no next";
+            }
+
+
+            const cd = document.getElementById("cd");
             const playPause = document.getElementById("togglePlay");
-            // console.log(state);
             if (state.paused) {
                 playPause.textContent = "play";
+                cd.classList.remove("spin")
+
             } else {
                 playPause.textContent = "pause";
+                cd.classList.add("spin");
             }
 
         });
-
 
 
         window.buttonTogglePlay = function () {
@@ -114,25 +164,14 @@
         });
     }
 
-    //change tracks
-    const playTrack = (deviceId) => {
-        fetch(`/api/playTrack?deviceId=${encodeURIComponent(deviceId)}`, {
-            method: "POST"
-        })
-            .then(res => res.text())
-            .then(text => console.log("Response:", text))
-            .catch(err => console.error("Error:", err));
-    };
-
-
 
     //==============setAnimation , interval============
     // เรียกทุก 1 วินาทีเพื่ออัปเดต progress
     setInterval(() => {
         // console.log(window.player);
-        if (window.player&&isReady) {
+        if (window.player && isReady) {
             player.getCurrentState().then(state => {
-            // console.log("callSetInterval");
+                // console.log("callSetInterval");
 
                 if (!state) return;
 
@@ -159,34 +198,31 @@
     }
 
     //=======ปรับเวลาเพลงจาจ้า=========
-    document.getElementById('progressBar').addEventListener('input',function(){
+    document.getElementById('progressBar').addEventListener('input', function () {
         const newPosition = parseInt(this.value);
-        window.player.seek(newPosition).then(()=>{
+        window.player.seek(newPosition).then(() => {
             console.log(`seeked to ${newPosition}`)
         })
     })
 
 
-
-
     ////=======================trash===========================///
     ////======check Did this account connect page นี้รึยังจ้ะหนู========
-/*
-    window.getStatePlayer = function () {
-        player.getCurrentState().then(state => {
-            if (!state) {
-                console.error('User is not playing music through the Web Playback SDK');
-                return;
-            }
-            var current_track = state.track_window.current_track;
-            var next_track = state.track_window.next_tracks[0];
+    /*
+        window.getStatePlayer = function () {
+            player.getCurrentState().then(state => {
+                if (!state) {
+                    console.error('User is not playing music through the Web Playback SDK');
+                    return;
+                }
+                var current_track = state.track_window.current_track;
+                var next_track = state.track_window.next_tracks[0];
 
-            console.log(state);
-            return state;
-        });
-    }
-*/
-
+                console.log(state);
+                return state;
+            });
+        }
+    */
 
 
 </script>

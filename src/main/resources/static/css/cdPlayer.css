@@ -1,0 +1,108 @@
+
+.cd-player-bar {
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    background-color: rgba(0, 0, 0, 0.7);
+    /*background: linear-gradient(*/
+    /*        rgba(0, 0, 0, 0.5) 0%,*/
+    /*        rgba(0, 0, 0, 0.5) 70%,*/
+    /*        rgb(191, 45, 89,0.5) 100%*/
+    /*);*/
+
+    padding: 10px;
+    border-radius: 50px 50px 0px 0px;
+}
+
+.track-controler{
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 5%;
+}
+
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.progress-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 200px;
+}
+
+.main-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.overlay-image {
+    position: absolute;
+    width: 40%;   /* หรือปรับให้เล็กกว่าถ้าต้องการ */
+    height: 40%;
+    pointer-events: none; /* ป้องกันไม่ให้คลิกทับ */
+}
+
+.spin {
+    animation: spin 5s linear infinite;
+}
+
+/*=====animation=======*/
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/*========แถบ==========*/
+/* สไตล์ของ progress bar */
+.progress-section input[type="range"] {
+    -webkit-appearance: none;
+    margin: 10px;
+    width: 100%;
+    height: 6px;
+    background: #444;           /* สีพื้นหลังของแถบ */
+    border-radius: 4px;
+    outline: none;
+}
+
+/* Track ของแถบ (เบื้องหลัง) */
+.progress-section input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: linear-gradient(to right, #bf2d59, #ff6f61); /* แถบสวย ๆ */
+    border-radius: 4px;
+}
+
+/* Thumb (ตัวกลม ๆ ที่เลื่อน) */
+.progress-section input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #bf2d59;
+    margin-top: -4px; /* เลื่อนให้อยู่ตรงกลางแถบ */
+    cursor: pointer;
+    transition: background 0.2s;
+}
+

@@ -28,7 +28,10 @@
 
     <div th:if="${user != null}" class="text-center ">
         <div class="d-flex flex-column mx-auto my-4 p-4 border rounded shadow "
-             style="max-width: 80vw; background-color: #2a2629; gap: 1rem; color: #ffffff;">
+             style="
+             max-width: 80vw;
+             background-color: rgba(0, 0, 0, 0.6);
+             gap: 1rem; color: #ffffff; ">
             <img th:src="${user.images[0].url}" alt="User Image" width="200" class="align-self-center"/>
             <p><strong>Display Name:</strong> <span th:text="${user.display_name}"></span></p>
             <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>

@@ -17,6 +17,7 @@
         <!--<form id="form">-->
         <label for="typeinput">Choese your top song type</label>
         <select
+                type="type"
                 id="typeinput"
                 name="type"
                 required
@@ -68,13 +69,18 @@
                     container.innerHTML = ""; // ล้างของเก่าออกก่อน
 
                     if (type === 'artists') {
-                        data.forEach(artist => {
+                        data.forEach((artist,index) => {
                             const div = document.createElement("div");
                             div.classList.add("text-center", "m-2", "p-2");
 
                             div.innerHTML =
                                 `
-                                <img src="${artist.images[0].url}" alt="artist Image" width="200"/>
+                                <p>${index+1}</p>
+                                <img src="${artist.images[0].url}"
+                                alt="artist Image"
+                                width="200"
+                                height="200"
+                                />
                                 <p><strong>Name: </strong><span>${artist.name}</span></p>
                                 <p><strong>Genres:</strong> ${artist.genres.join(' ')}</p>
                                 <p><strong>Popularity: </strong><span>${artist.popularity}</span></p>
@@ -83,13 +89,19 @@
                             container.appendChild(div);
                         });
                     } else {
-                        data.forEach(song => {
+                        data.forEach((song,index) => {
                             const div = document.createElement("div");
                             div.classList.add("text-center", "m-2", "p-2");
 
                             div.innerHTML =
                                 `
-                            <img src="${song.album.images[0].url}" alt="album image" width="200"/>
+                            <p>${index+1}</p>
+                            <img
+                            src="${song.album.images[0].url}"
+                            alt="album image"
+                            width="200"
+                            height="200"
+                            />
                             <p><strong>Name:</strong> <span>${song.name}</span></p>
                             <p><strong>Artist:</strong>${song.artists.map(artist => artist.name).join(', ')} </p>
                             <p><strong>Album:</strong> <span>${song.album.name}</span></p>

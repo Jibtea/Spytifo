@@ -1,8 +1,18 @@
-้ html{
+html{
     height: 100%;
 }
 body {
-    background-color: #252424;
+    /*background-color: #252424;*/
+    /*background: linear-gradient(to bottom right, #191818 0%, #252424 70% , #654457 100%  );*/
+    background: linear-gradient(
+            to bottom right,
+            rgba(25, 24, 24) 0%,
+            rgba(37, 36, 36) 70%,
+            rgb(108, 60, 90) 100%
+    );
+    background-attachment: fixed; /* <<< ตัวนี้สำคัญ */
+    background-size: cover;
+    background-repeat: no-repeat;
     color: #FFFFFF;
     margin: 0;
     padding: 0;
@@ -28,12 +38,14 @@ button {
 #form {
     display: flex;
     flex-direction: row;
+    align-items: center;
     max-width: 80vw;
     margin: 2rem auto;
     padding: 1.5rem;
     border: 1px solid #ffb1c7;
     border-radius: 10px;
-    background-color: #2a2629;
+    /*background-color: #2a2629;*/
+    background-color: rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     gap: 1rem;
     color: #f05080;
@@ -63,13 +75,10 @@ button:hover {
     background-color: #bf2d59;
 }
 
-.card{
-
-}
 
 /*tag a*/
 a:hover {
-    color: #1DB954;
+    color: #bf2d59;
 }
 
 a:link{
@@ -114,9 +123,12 @@ a:visited{
 }
 
 img{
-    border-radius: 100px 100px 100px 100px;
+    border-radius: 100% 100% 100% 100%;
+    /*display: block;*/
 }
+
 
 *, *::before, *::after {
     box-sizing: border-box;
 }
+
