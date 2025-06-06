@@ -7,16 +7,51 @@
     <meta charset="UTF-8">
     <title layout:title="Home">Home</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/trash/bootstrap.min.css}">
+    <style>
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-40%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-in-down {
+            animation: slideInDown 2s ease-out forwards;
+        }
+        h1{
+            font-size: 7vw;
+        }
+
+        @media (max-width: 768px) {
+            h1{
+                font-size: 6vh;
+            }
+        }
+
+    </style>
+    <!--    <link rel="stylesheet" th:href="@{/css/index.css}">-->
 </head>
 <body>
-<div layout:fragment="content">
-    <div class="middle">
-        <h1>Are you ready to find your top item on spoify</h1>
-        <a href="/login">
-            <button type="button">Let's Go</button>
-        </a>
+<main layout:fragment="content" class="container mt-md-5">
+    <div class="row">
+        <div class="col-12 col-lg-8  text-start slide-in-down">
+            <h1 >
+                <strong>Are you ready to find your top item on Spotify</strong>
+            </h1>
+        </div>
+        <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center mt-5 mt-md-0">
+            <a href="/login">
+                <button type="button" >Let's Go</button>
+            </a>
+        </div>
     </div>
-</div>
+</main>
+
 </body>
 </html>
 

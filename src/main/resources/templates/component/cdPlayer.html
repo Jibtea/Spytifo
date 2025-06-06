@@ -3,8 +3,8 @@
       xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" th:href="@{/css/style.css}"/>
 <link rel="stylesheet" th:href="@{/css/cdPlayer.css}"/>
-<div th:fragment="cdPlayer" class="cd-player-bar">
-    <div id="cd" class="image-container">
+<div th:fragment="cdPlayer" class="cd-player-bar d-flex text-white">
+    <div id="cd" class="CD flex-fill" style="min-width: 0; max-width: 400px">
         <!-- ภาพพื้นหลังหรือภาพหลัก -->
         <img src="https://png.pngtree.com/png-clipart/20230303/ourmid/pngtree-vinyl-records-png-image_6629914.png"
              alt="Main Cover" class="main-image"
@@ -12,31 +12,40 @@
 
         <!-- ภาพที่ทับด้านบน -->
         <img id="trackImg"
-             src=""
+             src="https://img.icons8.com/ios11/512/F25081/spotify.png"
              class="overlay-image"
         />
     </div>
-<!-- ==========================================   -->
-    <div class="track-controler">
-        <p id="trackSong">No track playing</p>
-        <!-- แถบเล่นเพลง -->
-        <div class="controls">
-            <button class="btn-clear" id="previous" onclick="buttonPreviousTrack()"><</button>
-            <button class="btn-clear" style="width: 120px" id="togglePlay" onclick="buttonTogglePlay()">play</button>
-            <button class="btn-clear" id="next" onclick="buttonNextTrack()">></button>
+    <!-- ==========================================   -->
+    <div class="track-controler flex-fill text-center" style="min-width: 0;">
+        <div class="marquee-container mx-auto my-0">
+            <p id="trackSong" class="m-0 marquee-text">No track playing</p>
         </div>
-        <div style="width: 100%; max-width: 400px;" class="progress-section">
-            <input type="range" id="progressBar" value="0" min="0" step="1" />
+        <!-- แถบเล่นเพลง -->
+        <div class="controls d-flex justify-content-center gap-3 ">
+            <button style=" background-color: initial;" id="previous" onclick="buttonPreviousTrack()"><</button>
+            <button
+                    style="max-width: 120px;
+                    background-color: initial;
+"
+                    id="togglePlay" onclick="buttonTogglePlay()">play</button>
+            <button style=" background-color: initial;" id="next" onclick="buttonNextTrack()">></button>
+        </div>
+        <div class="progress-section mx-auto" style="max-width: 200px;">
+            <input type="range" id="progressBar" value="0" min="0" step="1"/>
             <div>
                 <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
             </div>
         </div>
     </div>
-<!--  ===============================================  -->
-    <div class="track-next">
-        <p>next track</p>
-        <img id="nextTrackImg" url="https://img.icons8.com/ios11/512/F25081/spotify.png" width="80px" height="80px">
-        <p id="nextTrackName">name</p>
+    <!--  ===============================================style="height: 200px;">  -->
+    <div class="track-next d-flex flex-column flex-fill align-items-center justify-content-center "
+         style="min-width: 0;">
+        <p class="m-0">next track</p>
+        <img id="nextTrackImg" src="https://img.icons8.com/ios11/512/F25081/spotify.png" width="80" height="80"/>
+        <div class="marquee-container mx-auto">
+            <p id="nextTrackName" class="marquee-text m-0">no next</p>
+        </div>
     </div>
 
 
@@ -83,34 +92,32 @@
 
 
         player.addListener('player_state_changed', state => {
-            const img = state?.track_window?.current_track?.album?.images[0]?.url||null;
-            const trackNext = state?.track_window?.next_tracks[0]||null;
-            const imgNext = trackNext?.album?.images[0]?.url||null;
+            const img = state?.track_window?.current_track?.album?.images[0]?.url || null;
+            const trackNext = state?.track_window?.next_tracks[0] || null;
+            const imgNext = trackNext?.album?.images[0]?.url || null;
             const nameNext = trackNext?.name;
             // console.log(trackNext);
 
             const text = document.getElementById("trackSong");
             if (text) {
                 text.textContent = `${state.track_window.current_track.name}`;
+                updateMarquee("trackSong");
+                // text.textContent = `${state.track_window.current_track.name}`;
             }
 
             const trackImg = document.getElementById("trackImg");
             if (trackImg) {
-                trackImg.src = img || "";
+                trackImg.src = img || "https://img.icons8.com/ios11/512/F25081/spotify.png";
             }
 
             // next track
             const nextTrackImg = document.getElementById("nextTrackImg");
             const nextTrackName = document.getElementById("nextTrackName");
-
-            if(nextTrackImg&&nextTrackName&&imgNext!=null&&nameNext!=null){
-                nextTrackImg.src = imgNext;
-                nextTrackName.textContent=nameNext;
-            }else {
-                nextTrackImg.src = "https://img.icons8.com/ios11/512/F25081/spotify.png" ;
-                nextTrackName.textContent="no next";
+            if (nextTrackImg && nextTrackName && imgNext != null && nameNext != null) {
+                nextTrackImg.src = imgNext || "https://img.icons8.com/ios11/512/F25081/spotify.png";
+                nextTrackName.textContent = nameNext || "no next";
+                updateMarquee("nextTrackName");
             }
-
 
             const cd = document.getElementById("cd");
             const playPause = document.getElementById("togglePlay");
@@ -204,6 +211,24 @@
             console.log(`seeked to ${newPosition}`)
         })
     })
+
+
+    function updateMarquee(Id) {
+        const container = document.querySelector('.marquee-container');
+        const text = document.getElementById(Id);
+
+        // ลบ class เก่าทิ้งก่อน
+        text.classList.remove('marquee-animate');
+        text.classList.add('marquee-text');
+
+        // รอให้ DOM อัปเดตก่อนเช็กขนาด (เผื่อข้อความยังไม่วาด)
+        setTimeout(() => {
+            if (text.scrollWidth > container.clientWidth) {
+                text.classList.add('marquee-animate');
+            }
+        }, 100); // delay เล็กน้อยให้ DOM ทัน render
+    }
+
 
 
     ////=======================trash===========================///

@@ -1,0 +1,30 @@
+
+/*.header {*/
+/*    font-size: medium;*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    width: 100%;*/
+/*    height: 10%;*/
+/*    box-sizing: border-box;*/
+/*    !*background-color: black;*!*/
+/*    padding: 10px 25px; !* Top right bottom left*!*/
+/*    margin: 0px;*/
+/*    border-radius: 0% 0% 50px 0%;*/
+/*    z-index: 999;*/
+/*    !*display: flex;*!*/
+/*    !*justify-content: space-between; !* 👈 แบ่งซ้ายขวา *!*!*/
+/*    !*align-items: center;*!*/
+/*    !*flex-direction: row;*!*/
+/*}*/
+
+
+/*.left,*/
+/*.right {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    gap: 1.5rem;*/
+/*    margin-right: 20px;*/
+/*}*/
+
+
+

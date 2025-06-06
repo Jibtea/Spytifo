@@ -5,10 +5,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.view.RedirectView;
+
 
 import java.util.List;
 import java.util.Map;
@@ -36,12 +34,26 @@ public class UserController {
                 Map.class
         );
 
-        if (response.getStatusCode().is2xxSuccessful()) {
+        ResponseEntity<Map> response2 = restTemplate.exchange(
+                "https://api.spotify.com/v1/me/following?type=artist&limit=5",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                Map.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()&&response2.getStatusCode().is2xxSuccessful()) {
+            //=========response1============
             Map<String, Object> userData = response.getBody();
             model.addAttribute("user", userData);
 
+            //=========response2=========
+            Map<String, Object>artist_following = response2.getBody();
+
+
+            model.addAttribute("artist_following", artist_following);
             session.setAttribute("userData", userData);
-            System.out.println(session.getAttribute("userData"));
+//           System.out.println(session.getAttribute("userData"));
+            System.out.println(response2.getBody());
         } else {
             model.addAttribute("error", "Cannot get user data");
         }
