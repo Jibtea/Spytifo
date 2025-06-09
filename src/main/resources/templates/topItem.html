@@ -165,6 +165,7 @@
             const collectThisTrack = (button) => {
                 const trackUrl = button.value;
                 const deviceId = window.device_ids;
+                console.log("deviceID = ",deviceId);
                 console.log(trackUrl);
                 fetch(`/api/collectTrack?trackUrl=${trackUrl}&deviceId=${deviceId}`, {
                     method: "POST",

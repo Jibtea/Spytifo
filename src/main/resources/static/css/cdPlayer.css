@@ -21,46 +21,21 @@
     /*position: relative; !* เพื่อให้ลูก absolute วางอิงกับพ่อ *!*/
 }
 
-.track-controler{
-    flex-direction: column;
-    align-items: center;
-    /*margin: 5%;*/
-}
-
-
-.controls {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-}
-
-.progress-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .CD {
-    transform: translate(200px, -200px);
+    /*transform: translate(20vw, -20vh);*/
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40vw;
-    height: 40vw;
+    width: 20vw;
+    height: 20vw;
     overflow: visible;
-}
-
-.main-image {
-    /*width: 100%;*/
-    height: 100%;
-    display: block;
-    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .overlay-image {
     position: absolute;
-    width: 40%;   /* หรือปรับให้เล็กกว่าถ้าต้องการ */
+    width: 50%;   /* หรือปรับให้เล็กกว่าถ้าต้องการ */
     /*height: 40%;*/
     pointer-events: none; /* ป้องกันไม่ให้คลิกทับ */
     /*object-fit: cover;*/
@@ -73,18 +48,19 @@
 /*=====animation=======*/
 @keyframes spin {
     0% {
-        transform: translate(200px, -200px) rotate(0deg);
+        transform: rotate(0deg);
     }
     100% {
-        transform: translate(200px, -200px) rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
 .marquee-container {
     width: 20vw;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: nowrap; /*ไม่ขึ้นบรรทัดใหม่*/
     position: relative;
+    flex-shrink: 0; /*ไม่ให้ย่ออัตราส่วน*/
 }
 
 .marquee-text {
@@ -99,7 +75,7 @@
 
 @keyframes marquee {
     0% {
-        transform: translateX(0%);
+        transform: translateX(20%);
     }
     100% {
         transform: translateX(-100%);
@@ -112,7 +88,7 @@
 .progress-section input[type="range"] {
     -webkit-appearance: none;
     margin: 5px;
-    width: 100%;
+    width: 20vw;
     height: 6px;
     background: #444;           /* สีพื้นหลังของแถบ */
     border-radius: 4px;
@@ -140,29 +116,19 @@
 }
 
 
+@media (min-width: 981px){
+    .CD {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20vh;
+        height: 20vh;
+        overflow: visible;
+    }
+}
 
-
-/*@media (max-width: 992px) {*/
-/*    !*.cd-player-bar{*!*/
-/*    !*    width: 15vw;*!*/
-/*    !*    height: 15%;*!*/
-/*    !*    width: 100%;*!*/
-/*    !*    font-size: 1.3vh;*!*/
-/*    !*    flex-direction: row;*!*/
-/*    !*    align-items: center;*!*/
-/*    !*    bottom: 0;*!*/
-/*    !*    left: 0;*!*/
-/*    !*    padding-left: 0;*!*/
-/*    !*}*!*/
-
-/*    .image-container {*/
-/*        position: relative;*/
-/*        margin: 0;*/
-/*        display: flex;*/
-/*        justify-content: center;*/
-/*        align-items: center;*/
-/*        width: 20vw;*/
-/*        height: 20vw;*/
-/*    }*/
-
-/*}*/
+* {
+    box-sizing: border-box;
+}
+/*ป้องกันobjขยับเขยื้อน*/

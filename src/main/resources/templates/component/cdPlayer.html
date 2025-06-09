@@ -3,8 +3,8 @@
       xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" th:href="@{/css/style.css}"/>
 <link rel="stylesheet" th:href="@{/css/cdPlayer.css}"/>
-<div th:fragment="cdPlayer" class="cd-player-bar d-flex text-white">
-    <div id="cd" class="CD flex-fill" style="min-width: 0; max-width: 400px">
+<div th:fragment="cdPlayer" class="cd-player-bar d-flex align-items-center text-white fs-17">
+    <div id="cd" class="CD flex-fill " style="min-width: 0; max-width: 400px">
         <!-- ภาพพื้นหลังหรือภาพหลัก -->
         <img src="https://png.pngtree.com/png-clipart/20230303/ourmid/pngtree-vinyl-records-png-image_6629914.png"
              alt="Main Cover" class="main-image"
@@ -16,30 +16,33 @@
              class="overlay-image"
         />
     </div>
-    <!-- ==========================================   -->
-    <div class="track-controler flex-fill text-center" style="min-width: 0;">
-        <div class="marquee-container mx-auto my-0">
+    <!-- ================== track-controler   ========================   -->
+    <div class="position-relative flex-fill flex-column text-center justify-content-center" style="min-width: 0;">
+        <div class="marquee-container my-0 mx-auto">
             <p id="trackSong" class="m-0 marquee-text">No track playing</p>
         </div>
         <!-- แถบเล่นเพลง -->
-        <div class="controls d-flex justify-content-center gap-3 ">
+        <div class=" d-flex justify-content-center gap-3 ">
             <button style=" background-color: initial;" id="previous" onclick="buttonPreviousTrack()"><</button>
             <button
                     style="max-width: 120px;
                     background-color: initial;
 "
-                    id="togglePlay" onclick="buttonTogglePlay()">play</button>
+                    id="togglePlay" onclick="buttonTogglePlay()">play
+            </button>
             <button style=" background-color: initial;" id="next" onclick="buttonNextTrack()">></button>
         </div>
-        <div class="progress-section mx-auto" style="max-width: 200px;">
-            <input type="range" id="progressBar" value="0" min="0" step="1"/>
+
+        <!------------------------แถบแสดงว่าเพลงนี้กี่นาทีแล้ว-----------------------------       -->
+        <div class="justify-content-center progress-section">
+            <input type="range"  id="progressBar" value="0" min="0" step="1"/>
             <div>
                 <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
             </div>
         </div>
     </div>
-    <!--  ===============================================style="height: 200px;">  -->
-    <div class="track-next d-flex flex-column flex-fill align-items-center justify-content-center "
+    <!--  ===================== next track =========================  -->
+    <div class="track-next d-flex flex-column text-center flex-fill align-items-center justify-content-center w-25"
          style="min-width: 0;">
         <p class="m-0">next track</p>
         <img id="nextTrackImg" src="https://img.icons8.com/ios11/512/F25081/spotify.png" width="80" height="80"/>
@@ -57,7 +60,8 @@
     let isReady = false;
     window.onSpotifyWebPlaybackSDKReady = () => {
         const token = /*[[${session.spotifyToken}]]*/ '';
-        if (token == '') {
+        console.log("token: ", token);
+        if (token == '' || token == null) {
             console.error("Spotify token is missing.");
             return;
         }
@@ -69,14 +73,21 @@
                 },
                 volume: 0.5
             });
-        player.connect().then(success => {
-            if (success) {
-                console.log('Connected!');
-                isReady = true;
-                window.player = player;
-            }
+
+
+        // Error handling
+        player.addListener('initialization_error', ({message}) => {
+            console.error(message);
         });
-        // window.device_ids={device_id};
+        player.addListener('authentication_error', ({message}) => {
+            console.error(message);
+        });
+        player.addListener('account_error', ({message}) => {
+            console.error(message);
+        });
+        player.addListener('playback_error', ({message}) => {
+            console.error(message);
+        });
 
         player.addListener('ready', ({device_id}) => {
             console.log('Cd player ready for playing music', device_id);
@@ -88,20 +99,37 @@
 
         player.addListener('not_ready', ({deviceId}) => {
             console.log('This ID has gone offline', deviceId);
-        })
+        });
 
+
+        player.connect().then(success => {
+            if (success) {
+                console.log('Connected!');
+                isReady = true;
+                window.player = player;
+            }
+        }).catch(err => {
+                console.log(err)
+            }
+        );
+        // window.device_ids={device_id};
 
         player.addListener('player_state_changed', state => {
+
             const img = state?.track_window?.current_track?.album?.images[0]?.url || null;
             const trackNext = state?.track_window?.next_tracks[0] || null;
             const imgNext = trackNext?.album?.images[0]?.url || null;
             const nameNext = trackNext?.name;
-            // console.log(trackNext);
-
+            console.log(state);
             const text = document.getElementById("trackSong");
             if (text) {
                 text.textContent = `${state.track_window.current_track.name}`;
-                updateMarquee("trackSong");
+                if(state.paused){
+                    updateMarquee("trackSong",true);
+                }else{
+                    updateMarquee("trackSong",false);
+                }
+
                 // text.textContent = `${state.track_window.current_track.name}`;
             }
 
@@ -116,7 +144,7 @@
             if (nextTrackImg && nextTrackName && imgNext != null && nameNext != null) {
                 nextTrackImg.src = imgNext || "https://img.icons8.com/ios11/512/F25081/spotify.png";
                 nextTrackName.textContent = nameNext || "no next";
-                updateMarquee("nextTrackName");
+                updateMarquee("nextTrackName",false);
             }
 
             const cd = document.getElementById("cd");
@@ -213,7 +241,7 @@
     })
 
 
-    function updateMarquee(Id) {
+    function updateMarquee(Id,paused) {
         const container = document.querySelector('.marquee-container');
         const text = document.getElementById(Id);
 
@@ -222,13 +250,14 @@
         text.classList.add('marquee-text');
 
         // รอให้ DOM อัปเดตก่อนเช็กขนาด (เผื่อข้อความยังไม่วาด)
-        setTimeout(() => {
-            if (text.scrollWidth > container.clientWidth) {
-                text.classList.add('marquee-animate');
-            }
-        }, 100); // delay เล็กน้อยให้ DOM ทัน render
+        if(!paused){
+            setTimeout(() => {
+                if (text.scrollWidth > container.clientWidth) {
+                    text.classList.add('marquee-animate');
+                }
+            }, 100); // delay เล็กน้อยให้ DOM ทัน render
+        }
     }
-
 
 
     ////=======================trash===========================///

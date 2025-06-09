@@ -7,28 +7,46 @@
 
 <div th:fragment="header"
      class="container-fluid text-white mb-1 p-3 py-3 fs-17 d-flex justify-content-between align-items-center "
-     style="background-color: black; min-height: 10vh; border-radius: 0% 0% 50px 0%; position: fixed; top: 0;">
+     style="
+     background-color: black;
+     min-height: 10vh;
+     border-radius: 0% 0% 50px 0%;
+     position: fixed;
+     top: 0;"
+>
 
-        <!--spotify , logo link -->
-        <div class="d-flex align-items-center gap-2 ml-2">
-            <img src="https://img.icons8.com/ios11/512/F25081/spotify.png"
-                 alt="spotifyLOGO" class="img-fluid" style="max-height: 60px;"/>
-            <a href="https://developer.spotify.com/" class="d-none d-md-block text-white text-decoration-none">Spitifo</a>
-        </div>
-
-        <!--user or login page -->
-        <div class="d-flex align-items-center gap-3">
-            <th:block th:if="${session.userData != null}">
-                <a href="/topItem" class="text-white text-decoration-none">TopItem</a>
-                <a href="/profile" class="d-none d-md-block text-white text-decoration-none" th:text="${session.userData.display_name}"></a>
+    <!--user or login page -->
+    <div class="d-flex align-items-center gap-3">
+        <th:block th:if="${session.userData != null}">
+            <th:block
+                    th:if="${session.userData.images[0].url != null}">
                 <img th:src="${session.userData.images[0].url}" alt="User Image"
-                     class="img-fluid" style="max-height: 60px;" />
+                     class="img-fluid" style="max-height: 60px; cursor: pointer;;"
+                     onclick="openSidebar()"
+                />
             </th:block>
+            <a th:href="${session.userData.external_urls.spotify}" class="d-none d-md-block text-white text-decoration-none"
+               th:text="${session.userData.display_name}"></a>
+            <a href="/topItem" class="text-white text-decoration-none">TopItem</a>
 
-            <th:block th:if="${session.userData == null}">
-                <a href="/login" >Login</a>
-            </th:block>
-        </div>
+        </th:block>
+
+        <th:block th:if="${session.userData == null}">
+            <a href="/login">Login</a>
+        </th:block>
+    </div>
+
+    <!--spotify , logo link -->
+    <div class="d-flex align-items-center gap-2 ml-2">
+        <a href="https://developer.spotify.com/" class="d-none d-md-block text-white text-decoration-none">Spitifo</a>
+        <img src="https://img.icons8.com/ios11/512/F25081/spotify.png"
+             alt="spotifyLOGO"
+             class="img-fluid"
+             style="max-height: 60px;"
+        />
+    </div>
+
+
 
 </div>
 

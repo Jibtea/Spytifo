@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<main layout:fragment="content" class="container">
+
+    <div class="row">
+        <h1 class="text-center mb-3 mt-4">Your Spotify User Profile</h1>
+
+        <div th:if="${error}" class="col-12">
+            <p th:text="${error}" class="text-danger"></p>
+        </div>
+
+        <div th:if="${user == null}" class="col-12">
+            <p class="text-danger">Please login before use this website</p>
+        </div>
+
+        <!--=================USER not null=======================    -->
+        <th:block th:unless="${user == null}">
+            <th:block class="col-12 " th:if="${user.images[0]!=null}">
+                <img th:src="${user.images[0].url}" alt="User Image" class="col-4 "/>
+            </th:block>
+            <div class="col-12">
+                <p class="col-12"><strong>Display Name:</strong> <span th:text="${user.display_name}"></span></p>
+                <p class="col-12"><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                <p class="col-12"><strong>Country:</strong> <span th:text="${user.country}"></span></p>
+            </div>
+        </th:block>
+    </div>
+
+    <th:block th:if="${user != null}" class="row">
+        <h3 class="col-12">Your Lasted Followed Artists</h3>
+        <th:block
+                th:if="${artist_following != null and artist_following.artists != null and #lists.size(artist_following.artists.items) > 0}">
+            <div>
+                <div class="row mb-4" th:each="item : ${artist_following.artists.items}">
+                    <!-- ภาพด้านซ้าย -->
+                    <div class="col-md-3">
+                        <div class="ratio ratio-1x1 rounded overflow-hidden shadow">
+                            <img th:src="${item.images[0].url}" class="w-100 h-100 object-fit-cover" alt="Artist Image"/>
+                        </div>
+                    </div>
+
+                    <!-- ข้อมูลด้านขวา -->
+                    <div class="col-md-9 d-flex flex-column justify-content-center">
+                        <h4 th:text="${item.name}"></h4>
+                        <p>Followers: <span th:text="${item.followers.total}"></span></p>
+                        <a th:href="${item.external_urls.spotify}" target="_blank" >Click to
+                            Spotify</a>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </th:block>
+    <th:block
+            th:unless="${artist_following != null and artist_following.artists != null and #lists.size(artist_following.artists.items) > 0}">
+        You didn't follow any artist
+    </th:block>
+
+
+    <th:block th:if="${user!=null}">
+        <a href="/topItem">
+            <button type="button">TopItem Page</button>
+        </a>
+    </th:block>
+    <th:block th:if="${user==null}">
+        <a href="/login">
+            <button type="button">login your spotify</button>
+        </a>
+    </th:block>
+</main>
+</body>
+</html>
+
+
+<!--    <div th:if="${user != null}" class="text-center ">
+        <div class="d-flex flex-column mx-auto my-4 p-4 border rounded shadow "
+             style="
+             max-width: 80vw;
+             background-color: rgba(0, 0, 0, 0.6);
+             gap: 1rem; color: #ffffff; ">
+            <img th:src="${user.images[0].url}" alt="User Image" width="200" class="align-self-center"/>
+            <p><strong>Display Name:</strong> <span th:text="${user.display_name}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p><strong>Country:</strong> <span th:text="${user.country}"></span></p>
+        </div>
+ </div>-->

@@ -9,16 +9,37 @@
   <link rel="stylesheet" th:href="@{/css/custom-bootstrap.css}"/>
   <link rel="stylesheet" th:href="@{/css/header.css}"/>
 </head>
+<style>
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%; /* เริ่มต้นปิดไว้ */
+    height: 100%;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.3s;
+    z-index: 1000;
+  }
+</style>
 <body>
 <header>
   <link rel="icon" type="image/x-icon" th:href="@{/favicon.png}" />
   <div class="header" th:insert="~{/component/header::header}"></div>
 </header>
 
+<div class="sidebar" th:insert="~{/component/sidebar::profileSidebar}"></div>
+<script>
+  function openSidebar() {
+    // const sidebar = document.getElementById("sidebar");
+    document.getElementById("sidebar").style.width = "40vw";
+  }
+  function closeSidebar(){
+    document.getElementById("sidebar").style.width = "0vw";
+  }
+</script>
 
-<!--<div th:insert="~{/component/cdPlayer::cdPlayer}"></div>-->
-<!--  <div th:replace="component/cdPlayer"></div>-->
-<main layout:fragment="content" class="fs-17" style="padding-top: 40px; padding-bottom: 300px;">
+<main layout:fragment="content" class="fs-17" style="padding-top: 40px; padding-bottom: 1000px;">
     <!-- เนื้อหาหน้าย่อยจะมาแทรกตรงนี้ -->
 </main>
 
