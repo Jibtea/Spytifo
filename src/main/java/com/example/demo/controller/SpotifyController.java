@@ -130,46 +130,6 @@ public class SpotifyController {
         return new RedirectView("/"); // หรือ redirect ไปหน้า login
     }
 
-    @GetMapping("/sidebar")
-    public String getSidebarContent(HttpSession session, Model model) {
-        String token = (String) session.getAttribute("spotifyToken");
-        System.out.println("token"+token);
-//        model.addAttribute("userData", session.getAttribute("userData"));
-
-        if (token == null) {
-            return "component/sidebar :: profileSidebar";
-        }
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-        try {
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    "https://api.spotify.com/v1/me/following?type=artist&limit=5",
-                    HttpMethod.GET,
-                    new HttpEntity<>(headers),
-                    Map.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                //=========response============
-                Map<String, Object> followedArtists = response.getBody();
-                Map<String, Object> artists = (Map<String, Object>) followedArtists.get("artists");
-                session.setAttribute("artists", artists);
-//                model.addAttribute("artists", artists);
-//
-                System.out.println("artists"+artists);
-            }else {
-                model.addAttribute("error", "Spotify API failed");
-            }
-            return "component/sidebar :: profileSidebar";
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            System.out.println("Spotify API error: " + ex.getStatusCode() + " - " + ex.getResponseBodyAsString());
-            model.addAttribute("error", "Spotify API failed: " + ex.getMessage());
-            return "component/sidebar :: profileSidebar";
-        }
-    }
-
     private String getUserData(HttpSession session, Model model) {
         String token = (String) session.getAttribute("spotifyToken");
         model.addAttribute("token", token);
@@ -191,6 +151,13 @@ public class SpotifyController {
                     Map.class
             );
 
+            ResponseEntity<Map> response2 = restTemplate.exchange(
+                    "https://api.spotify.com/v1/me/following?type=artist&limit=5",
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    Map.class
+            );
+
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 //=========response============
@@ -198,6 +165,9 @@ public class SpotifyController {
                 model.addAttribute("user", userData);
 
                 session.setAttribute("userData", userData);
+                Map<String, Object> followedArtists = response2.getBody();
+                Map<String, Object> artists = (Map<String, Object>) followedArtists.get("artists");
+                session.setAttribute("artists", artists);
             } else {
                 model.addAttribute("error", "Spotify API failed");
             }

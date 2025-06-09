@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <link rel="stylesheet" th:href="@{/css/style.css}"/>
 <div th:fragment="profileSidebar">
-    <div id="sidebar" class="sidebar row">
+    <div id="sidebar" class="sidebar row fs-4">
         <button class="col-12" onclick="closeSidebar()"><<</button>
         <!--        <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar()">&times;</a>-->
         <th:block th:if="${session.userData!=null}">
@@ -59,6 +59,11 @@
             <p>you didn't follow any artist</p>
         </th:block>
 
+        <a href="/logout">
+            <button class="w-100">
+                logout
+            </button>
+        </a>
 
     </div>
 </div>

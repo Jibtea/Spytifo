@@ -35,10 +35,8 @@
 
 .overlay-image {
     position: absolute;
-    width: 50%;   /* หรือปรับให้เล็กกว่าถ้าต้องการ */
-    /*height: 40%;*/
+    width: 75%;   /* หรือปรับให้เล็กกว่าถ้าต้องการ */
     pointer-events: none; /* ป้องกันไม่ให้คลิกทับ */
-    /*object-fit: cover;*/
 }
 
 .spin {

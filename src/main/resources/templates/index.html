@@ -24,7 +24,7 @@
             animation: slideInDown 2s ease-out forwards;
         }
         h1{
-            font-size: 7vw;
+            font-size: 6vw;
         }
 
         @media (max-width: 768px) {
@@ -33,6 +33,9 @@
             }
         }
 
+        body{
+            padding: 0;
+        }
     </style>
     <!--    <link rel="stylesheet" th:href="@{/css/index.css}">-->
 </head>
@@ -45,9 +48,16 @@
             </h1>
         </div>
         <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center mt-5 mt-md-0">
-            <a href="/login">
-                <button type="button" >Let's Go</button>
-            </a>
+            <th:block th:if="${session.spotifyToken!=null}">
+                <a href="/topItem">
+                    <button type="button" >Let's Go</button>
+                </a>
+            </th:block>
+            <th:block th:unless="${session.spotifyToken!=null}">
+                <a href="/login">
+                    <button type="button" >Let's Go</button>
+                </a>
+            </th:block>
         </div>
     </div>
 </main>

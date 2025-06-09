@@ -32,11 +32,11 @@
 </head>
 <body>
 <!--<div th:replace="index :: header"/>-->
-<main layout:fragment="content" class="container fs-5">
+<main layout:fragment="content" class="container fs-4">
     <form id="form" class="row">
         <!--<form id="form">-->
         <div class="col-12 row">
-            <label for="typeinput" class="col-12 col-md-6">Choese your top song type</label>
+            <label for="typeinput" class="col-12 col-md-6">Choese your top type</label>
             <select
                     type="type"
                     id="typeinput"
@@ -77,7 +77,10 @@
     </form>
     <th:block th:if="${session.spotifyToken}">
 
-        <div id="items" class="d-flex flex-column justify-content-center align-items-center">
+        <div id="items"
+             class="d-flex flex-column justify-content-center align-items-center"
+             style="margin-bottom: 500px;"
+        >
             <p>Please choose query type</p>
         </div>
 
@@ -109,7 +112,7 @@
                                     `
                                 <p>${index + 1}</p>
                                 <img src="${artist.images[0].url}"
-                                alt="artist Image" class="listImg"
+                                alt="artist Image" class="listImg mb-3"
 
                                 />
                                 <p>Name:<span>${artist.name}</span></p>
@@ -130,7 +133,7 @@
                             <img
                             src="${song.album.images[0].url}"
                             alt="album image"
-                            class="listImg"
+                            class="listImg mb-3"
                             />
                             <p>Name: <span>${song.name}</span></p>
                             <p>Artist: ${song.artists.map(artist => artist.name).join(', ')} </p>
