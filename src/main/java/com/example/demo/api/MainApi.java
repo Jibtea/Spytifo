@@ -1,6 +1,7 @@
 package com.example.demo.api;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class MainApi {
+    private final RestTemplateBuilder restTemplateBuilder;
+
+    public MainApi(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplateBuilder = restTemplateBuilder;
+    }
+
     @PostMapping("/hello")
     public void hello(HttpSession session, @RequestParam String name) {
         session.setAttribute("name", name);
@@ -32,31 +39,49 @@ public class MainApi {
     @PostMapping("/topItem")
     public ResponseEntity<?> topItem(
             HttpSession session,
-            @RequestBody Map<String,String> body
-            ) {
-        String type = (String) body.get("type");
-        int limit = Integer.parseInt(body.get("limit"));
+            @RequestBody Map<String, String> body) {
+        try {
+            String type = body.get("type");
+            int limit = Integer.parseInt(body.get("limit"));
 
+            String token = (String) session.getAttribute("spotifyToken");
 
-        String token = (String) session.getAttribute("spotifyToken");
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Missing Spotify token"));
+            }
 
+            String url = "https://api.spotify.com/v1/me/top/" + type + "?time_range=short_term&limit=" + limit;
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + token);
+            HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String Url = "https://api.spotify.com/v1/me/top/" + type + "?limit=" + limit;
-        //ไว้ส่งขอapi
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = restTemplate.exchange(
-                Url,
-                HttpMethod.GET,
-                request,
-                Map.class
-        );
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    request,
+                    Map.class
+            );
 
-        List<Map<String, Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
-        return ResponseEntity.ok(items);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Map bodyMap = response.getBody();
+                if (bodyMap != null && bodyMap.containsKey("items")) {
+                    List<Map<String, Object>> items = (List<Map<String, Object>>) bodyMap.get("items");
+                    return ResponseEntity.ok(items);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("error", "Missing 'items' in response"));
+                }
+            } else {
+                return ResponseEntity.status(response.getStatusCode())
+                        .body(Map.of("error", "Spotify API returned " + response.getStatusCode()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 
 
@@ -99,6 +124,52 @@ public class MainApi {
     }
 
 
+    @GetMapping("/playlistItem")
+    public ResponseEntity<?> top50(HttpSession session) {
+        String token = (String) session.getAttribute("spotifyToken");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+/*
+        Map<String, Object> userData = (Map<String, Object>) session.getAttribute("userData");
+//        System.out.println("token : "+userData);
+        String country = (String) userData.get("country");
+//        System.out.println("country : "+country);
+
+        Map<String, String> playlistMap = Map.of(
+                "TH", "37i9dQZEVXbMnz8KIWsvf9",     // Thailand Top 50
+                "US", "37i9dQZEVXbLRQDuF5jeBp",     // USA Top 50
+                "JP", "37i9dQZEVXbKXQ4mDTEBXq"      // Japan Top 50
+        );
+
+        String playlistId = playlistMap.getOrDefault(country, "37i9dQZEVXbMDoHDwVN2tF"); // Global Top 50
+
+ */
+        String playlistUrl = "https://api.spotify.com/v1/playlists/6Yqe2tMaSLDeJh1Ek4qWYH/tracks";
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            ResponseEntity<Map> playlist = restTemplate.exchange(
+                    playlistUrl,
+                    HttpMethod.GET,
+                    request,
+                    Map.class
+            );
+//            System.out.println(playlist.getBody().get("items"));
+            return ResponseEntity.ok(playlist.getBody().get("items"));
+        } catch (HttpClientErrorException e) {
+            System.out.println("Error status: " + e.getStatusCode());
+            System.out.println("Error body: " + e.getResponseBodyAsString());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+        }
+
+
+//        return ResponseEntity.ok(playlist.getBody().get("items"));
+    }
+
+
 }
 
 /*
@@ -138,4 +209,6 @@ public class MainApi {
             return ResponseEntity.status(e.getRawStatusCode()).body(e.getResponseBodyAsString());
         }
     }
+
+
 */

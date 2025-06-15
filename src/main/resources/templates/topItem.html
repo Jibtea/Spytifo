@@ -7,6 +7,25 @@
     <title>Title</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
             integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <!-- jQuery (ต้องมาก่อน DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables core JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+    <!-- DataTables Bootstrap 5 integration -->
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Bootstrap JS (หลังสุด ไม่จำเป็นต้องมาก่อน DataTable) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         .listImg {
@@ -28,88 +47,490 @@
             /*    font-size: 1.5vh;*/
             /*}*/
         }
+
+        .toggle-btn {
+            background-color: #f05080;
+            color: white;
+            border: none;
+            height: 50px;
+            transition: 0.2s ease;
+            border-radius: 0;
+            opacity: 0.5; /* default สีอ่อนลง */
+        }
+
+        .toggle-btn.active {
+            opacity: 1; /* ถ้า active ให้ชัด */
+        }
+
+        /* ซ่อนด้วย opacity + max-height */
+        #top-section, #form, #banner {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 1s ease, opacity 1s ease;
+        }
+
+        #top-section.show, #form.show, #banner.show {
+            max-height: 500px;
+            opacity: 1;
+            z-index: 200;
+        }
+
+        #form.show {
+            display: flex;
+        }
+
+
+
+
+
+
+
+        /*===========table===============*/
+        table.dataTable {
+            table-layout: fixed;         /* ทำให้คอลัมน์แต่ละช่องกว้างเท่ากับ header */
+            width: 100% !important;
+            text-align: center;          /* จัด text ตรงกลาง */
+        }
+
+        table.dataTable th,
+        table.dataTable td {
+            text-align: center;          /* จัดข้อความตรงกลาง */
+            vertical-align: middle;     /* จัดแนวดิ่งตรงกลาง */
+            white-space: nowrap;        /* ป้องกันการขึ้นบรรทัดใหม่ */
+            overflow: hidden;
+            text-overflow: ellipsis;    /* แสดง ... ถ้าข้อมูลยาวเกิน */
+            background-color: rgba(26, 29, 32, 0.65);
+        }
+
+        table.dataTable th{
+            /*border-radius: 50px 0 0 50px;*/
+            background-color: rgba(26, 29, 32);
+        }
+        /*-------------th อันเน้หัวตารางนาน้า-----------*/
+        /* มุมซ้ายบน */
+        table.dataTable thead tr th:first-child {
+            border-top-left-radius: 10px;
+        }
+
+        /* มุมขวาบน */
+        table.dataTable thead tr th:last-child {
+            border-top-right-radius: 10px;
+        }
+
+        /*--------------tr tr ลูกๆนั่เอง----------------*/
+
+
+        /* มุมซ้ายบน-ล่าง */
+        table.dataTable tbody tr td:first-child {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 60px;
+        }
+
+        /* มุมขวาบน-ล่าง */
+        table.dataTable tbody tr td:last-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 40px;
+        }
+
+
+        /*--------------------*/
+
+        /* ความสวยงามของ length menu */
+        .dataTables_length label {
+            color: #ffffff;
+        }
+        .dataTables_length select {
+            background-color: #222;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+        .dataTables_length select:focus {
+            outline: none;
+            border: 1px solid #ff69b4;
+            box-shadow: 0 0 10px #ff69b4;
+        }
+
+        /* ความสวยงามของช่อง search */
+        .dataTables_filter label {
+            color: #f05080;
+        }
+        .dataTables_filter input {
+            background-color: #222;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+        .dataTables_filter input:focus {
+            outline: none;
+            border: 1px solid #ff69b4;
+            box-shadow: 0 0 10px #ff69b4;
+            background-color: #515151;
+        }
+
+        /*============= ปุ่ม pagination แร้วเป็ฯ ui li งง ทำทำไม งง==============*/
+        /* ปุ่ม li ที่เป็น paginate_button */
+        .dataTables_paginate ul.pagination li.paginate_button {
+            background-color: #222 !important;
+            border: 1px solid #444;
+            margin: 2px;
+            border-radius: 5px;
+        }
+
+        /* สีข้อความในลิงก์ (ถ้ามี a ข้างใน) */
+        .dataTables_paginate ul.pagination li.paginate_button a {
+            color: #ffffff !important;
+            background-color: transparent !important; /* ถ้าต้องการล้าง bg สี */
+            text-decoration: none;
+            display: block; /* ให้เต็มพื้นที่ li */
+            padding: 5px 10px; /* ปรับขนาดตามต้องการ */
+        }
+
+        /* ปุ่ม active (หน้าแสดงตอนนี้) */
+        .dataTables_paginate ul.pagination li.paginate_button.active,
+        .dataTables_paginate ul.pagination li.paginate_button.current {
+            background-color: #f05080 !important;
+            border: 1px solid #ff69b4 !important;
+            box-shadow: 0 0 8px #ff69b4 !important;
+        }
+
+        /* Hover ปุ่ม */
+        .dataTables_paginate ul.pagination li.paginate_button:hover a {
+            color: #f05080 !important;
+            background-color: #474747 !important;
+            border: 1px solid #ff69b4 !important;
+            box-shadow: 0 0 8px #ff69b4 !important;
+        }
+
+
+        /*---------------*/
+
+
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_length {
+            color: white;
+        }
     </style>
 </head>
 <body>
 <!--<div th:replace="index :: header"/>-->
+
 <main layout:fragment="content" class="container fs-4">
-    <form id="form" class="row">
-        <!--<form id="form">-->
-        <div class="col-12 row">
-            <label for="typeinput" class="col-12 col-md-6">Choese your top type</label>
-            <select
-                    type="type"
-                    id="typeinput"
-                    name="type"
-                    required
-                    oninvalid="this.setCustomValidity('Please Select Query type')"
-                    oninput="this.setCustomValidity('')"
-                    onchange="updateType()"
-                    class="col-12 col-md-6"
+    <!--    <div id="banner" class="banner container-fluid px-0" th:insert="~{/component/banner::banner}"></div>-->
+    <div id="top-section" style="position: relative; " class="show">
+
+        <div th:replace="~{/component/banner::banner}" class="show"></div>
+        <form id="form" class="row my-1" style="display: none;"  >
+            <!--<form id="form">-->
+            <div class="col-12 row">
+                <label for="typeinput" class="col-12 col-md-6">Choese your top type</label>
+                <select
+                        type="type"
+                        id="typeinput"
+                        name="type"
+                        required
+                        oninvalid="this.setCustomValidity('Please Select Query type')"
+                        oninput="this.setCustomValidity('')"
+                        onchange="updateType()"
+                        class="col-12 col-md-6"
+                >
+                    <option value="" disabled selected hidden>-- Select Query Type --</option>
+                    <option value="tracks">Tracks</option>
+                    <option value="artists">Artists</option>
+                </select>
+            </div>
+
+            <div class="col-12 row">
+                <label for="limitinput" class="col-12 col-md-6">limit songs:</label>
+                <input
+                        type="limit"
+                        id="limitinput"
+                        name="limit"
+                        min="1"
+                        max="50"
+                        required
+                        oninvalid="this.setCustomValidity('Please input number between 1-50')"
+                        oninput="this.setCustomValidity('')"
+                        class="col-12 col-md-6"
+
+                />
+            </div>
+            <button
+                    type="button" id="button"
+                    onclick="getTopItem()"
+                    class="col-12"
             >
-                <option value="" disabled selected hidden>-- Select Query Type --</option>
-                <option value="tracks">Tracks</option>
-                <option value="artists">Artists</option>
-            </select>
-        </div>
+                let's watch your top ...
+            </button>
+        </form>
 
-        <div class="col-12 row">
-            <label for="limitinput" class="col-12 col-md-6">limit songs:</label>
-            <input
-                    type="limit"
-                    id="limitinput"
-                    name="limit"
-                    min="1"
-                    max="50"
-                    required
-                    oninvalid="this.setCustomValidity('Please input number between 1-50')"
-                    oninput="this.setCustomValidity('')"
-                    class="col-12 col-md-6"
+        <button onclick="closeForm()"
+                style="
+            position: absolute;
+            bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+            z-index: 10;
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            color: #FFFFFF;
+            cursor: pointer;
+        ">
+            &#9650;
+        </button>
+        <!--   &#9650; unicode => ▲     -->
 
-            />
+    </div>
+
+    <!-- ปุ่มแสดงฟอร์ม (▼) -->
+    <div id="form-toggle-btn"
+         class="text-center d-none"
+         style="
+            max-width: 80vw;
+            margin: 2rem auto;
+            /*border: 1px solid #ffb1c7;*/
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            gap: 1rem;
+            color: #f05080;
+">
+        <button onclick="showForm()"  style="background-color: transparent;">▼</button>
+    </div>
+
+    <div class="row mb-3 justify-content-end">
+        <div class="col-auto">
+            <button type="button" id="toggle" style="border-radius: 0" onclick="toggleBannerForm()">TopItem</button>
+            <button id="btn-unsee" class="toggle-btn active" onclick="unseeTable()">𖧋</button>
+            <button id="btn-see" class="toggle-btn" onclick="seeTable()">▤</button>
         </div>
-        <button
-                type="button" id="button"
-                onclick="getTopItem()"
-                class="col-12"
-        >
-            let's watch your top ...</button>
-    </form>
+    </div>
+
     <th:block th:if="${session.spotifyToken}">
 
         <div id="items"
-             class="d-flex flex-column justify-content-center align-items-center"
-             style="margin-bottom: 500px;"
+             class="d-flex flex-column justify-content-center align-items-center "
+             style="margin-bottom: 500px;
+              z-index: 2;
+"
         >
             <p>Please choose query type</p>
         </div>
+    </th:block>
 
         <script th:inline="javascript">
+            let table = false;
+
+            function closeForm() {
+                const topSection = document.getElementById("top-section");
+                topSection.classList.remove("show");
+                document.getElementById("form-toggle-btn").classList.remove("d-none");
+            }
+
+            function showForm() {
+                const topSection = document.getElementById("top-section");
+                topSection.classList.add("show");
+                document.getElementById("form-toggle-btn").classList.add("d-none");
+            }
+
+            function seeTable() {
+                table = true;
+
+                closeForm();
+
+                // ปรับปุ่ม active
+                document.getElementById('btn-see').classList.add('active');
+                document.getElementById('btn-unsee').classList.remove('active');
+                getTopItem();
+            }
+
+            function unseeTable() {
+                table = false;
+
+                showForm();
+
+                // ปรับปุ่ม active
+                document.getElementById('btn-unsee').classList.add('active');
+                document.getElementById('btn-see').classList.remove('active');
+                getTopItem();
+            }
+
+
+            function hideWithTransition(element) {
+                element.classList.remove("show"); // เริ่ม transition (opacity 1 → 0)
+                // หลัง 0.2 วินาที (ให้เวลาทำ transition), ค่อย display none
+                // setTimeout(() => {
+                //     element.style.display = "none";
+                // }, 200);
+                element.style.display = "none";
+            }
+
+            function showWithTransition(element, displayType = "block") {
+                element.style.display = displayType; // เปิดก่อนเพื่อให้ transition เริ่มทำงาน
+                requestAnimationFrame(() => {
+                    element.classList.add("show"); // เริ่ม transition (opacity 0 → 1)
+                });
+            }
+
+
+            function toggleBannerForm() {
+                const banner = document.getElementById('banner');
+                const form = document.getElementById('form');
+                const button = document.getElementById('toggle');
+
+
+                // const isBannerVisible = banner.style.display !== "none";
+                const isBannerVisible = banner.classList.contains("show");
+
+                if (isBannerVisible) {
+                    // // banner.style.display = "none";
+                    // banner.classList.remove("show");
+                    // // form.style.display = "flex"; // ใช้ flex เพื่อให้ row ทำงาน
+                    // form.classList.add("show");
+                    button.textContent = "Banner"
+
+                    hideWithTransition(banner);
+                    showWithTransition(form, "flex");
+
+                } else {
+                    // // banner.style.display = "block";
+                    // // form.style.display = "none";
+                    // form.classList.remove("show");
+                    // // form.style.display = "flex"; // ใช้ flex เพื่อให้ row ทำงาน
+                    // banner.classList.add("show");
+                    button.textContent = "TopItem"
+
+                    hideWithTransition(form);
+                    showWithTransition(banner, "block");
+                }
+
+                console.log("finish laew ja");
+            }
+
 
             const getTopItem = () => {
-                const type = document.getElementById('typeinput').value;
-                const limit = document.getElementById('limitinput').value;
-                fetch(/*[[@{/api/topItem}]]*/'', {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        type: type,
-                        limit: limit
+                const type = document.getElementById('typeinput').value || "tracks";
+                const limit = document.getElementById('limitinput').value || 0;
+                if (table) {
+                    const container = document.getElementById("items");
+                    container.innerHTML = "";
+                    document.getElementById("items").style.paddingBottom = "30vh";
+                    if (type === 'artists') {
+                        $('#items').load('/component/artistTable', function () {
+                            fetch('/api/topItem', {
+                                method: "POST",
+                                headers: {"Content-Type": "application/json"},
+                                body: JSON.stringify({type: 'artists', limit: limit}) // limit เป็นตัวแปรที่กำหนดไว้แล้ว
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+
+                                    console.log(data);
+                                    $('#artistTable').DataTable({
+                                        data: data,
+                                        destroy: true,
+                                        pageLength: 5,
+                                        lengthMenu: [ [5, 10, 15,20, -1], [5, 10, 15,20, "All"] ],
+                                        columns: [
+                                            {
+                                                data: 'images',
+                                                render: images => {
+                                                    if (images && images.length > 0) {
+                                                        return `<img src="${images[0].url}" alt="Artist Image" style="height:12vw;">`;
+                                                    }
+                                                    return '';
+                                                }
+                                            },
+                                            { data: 'name' },
+                                            {
+                                                data: 'genres',
+                                                render: genres => (genres ?? []).join(', ')
+                                            },
+                                            {
+                                                data: 'followers',
+                                                render: followers => followers.total.toLocaleString()
+                                            },
+                                            {
+                                                data: 'external_urls.spotify',
+                                                render: url => `<a href="${url}" target="_blank">Link</a>`
+                                            }
+                                        ]
+                                    });
+                                }).catch(error => console.error('Error:', error));
+                        });
+                        closeForm();
+
+                    } else {
+                        $('#items').load('/component/trackTable', function () {
+                            fetch('/api/topItem', {
+                                method: "POST",
+                                headers: {"Content-Type": "application/json"},
+                                body: JSON.stringify({type: 'tracks', limit: `${limit}`})
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+                                    $('#trackTable').DataTable({
+                                        data: data,
+                                        destroy: true,
+                                        pageLength: 5,
+                                        lengthMenu: [ [5, 10, 15,20, -1], [5, 10, 15,20, "All"] ],
+                                        columns: [
+                                            {
+                                                data: 'album.images',
+                                                render: images => {
+                                                    // images เป็น array ของรูป
+                                                    if (images && images.length > 0) {
+                                                        return `<img src="${images[0].url}" alt="Album Art" style="height:12vw;">`;
+                                                    }
+                                                    return '';
+                                                }
+                                            },
+                                            { data: 'name' },
+                                            {
+                                                data: 'artists',
+                                                render: artists => artists.map(a => a.name).join(', ')
+                                            },
+                                            { data: 'popularity' },
+                                            // {
+                                            //     data: 'external_urls.spotify',
+                                            //     render: url => `<a href="${url}" target="_blank">Link</a>`
+                                            // },
+                                            {
+                                                data: 'uri',
+                                                // render: url => `<a href="${url}" target="_blank">Link</a>`
+                                                render: uri=>`<button type="button" value="${uri}" onclick="collectThisTrack(this)" >play</button>`
+                                            }
+                                        ]
+                                    });
+                                })
+                                .catch(error => console.error('Error:', error));
+                        });
+                        closeForm();
+                    }
+                } else {
+                    fetch(/*[[@{/api/topItem}]]*/'', {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                            type: type,
+                            limit: limit
+                        })
                     })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        const container = document.getElementById("items");
-                        container.innerHTML = ""; // ล้างของเก่าออกก่อน
+                        .then(response => response.json())
+                        .then(data => {
+                            // console.log(data);
+                            const container = document.getElementById("items");
+                            container.innerHTML = ""; // ล้างของเก่าออกก่อน
+                            document.getElementById("items").style.paddingBottom = "20vh";
 
-                        if (type === 'artists') {
-                            data.forEach((artist, index) => {
-                                const div = document.createElement("div");
-                                div.classList.add("text-center", "m-2", "p-2", "listDiv");
+                            if (type === 'artists') {
+                                data.forEach((artist, index) => {
+                                    const div = document.createElement("div");
+                                    div.classList.add("text-center", "m-2", "p-2", "listDiv");
 
-                                div.innerHTML =
-                                    `
+                                    div.innerHTML =
+                                        `
                                 <p>${index + 1}</p>
                                 <img src="${artist.images[0].url}"
                                 alt="artist Image" class="listImg mb-3"
@@ -120,15 +541,15 @@
                                 <p>Popularity: <span>${artist.popularity}</span></p>
                                 <p><a href="${artist.uri}">Listen again</a></p>
                        `;
-                                container.appendChild(div);
-                            });
-                        } else {
-                            data.forEach((song, index) => {
-                                const div = document.createElement("div");
-                                div.classList.add("text-center", "m-2", "p-2", "listDiv");
+                                    container.appendChild(div);
+                                });
+                            } else {
+                                data.forEach((song, index) => {
+                                    const div = document.createElement("div");
+                                    div.classList.add("text-center", "m-2", "p-2", "listDiv");
 
-                                div.innerHTML =
-                                    `
+                                    div.innerHTML =
+                                        `
                             <p>${index + 1}</p>
                             <img
                             src="${song.album.images[0].url}"
@@ -141,17 +562,17 @@
                             <p><a href="${song.external_urls.spotify}">Open in spotify</a></p>
                             <button type="button" value="${song.uri}" onclick="collectThisTrack(this)" >Listen this song</button>
                             `
-                                ;
-                                container.appendChild(div);
-                            });
-                        }
+                                    ;
+                                    container.appendChild(div);
+                                });
+                            }
 
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("Please put correct type query and limit");
-                    });
-
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // alert("Please put correct type query and limit");
+                        });
+                }
             }
 
             $(() => {
@@ -168,7 +589,7 @@
             const collectThisTrack = (button) => {
                 const trackUrl = button.value;
                 const deviceId = window.device_ids;
-                console.log("deviceID = ",deviceId);
+                console.log("deviceID = ", deviceId);
                 console.log(trackUrl);
                 fetch(`/api/collectTrack?trackUrl=${trackUrl}&deviceId=${deviceId}`, {
                     method: "POST",
@@ -177,7 +598,6 @@
                     .catch(error => console.error('Error : ', error));
             }
         </script>
-    </th:block>
 
 
     <th:block th:unless="${session.spotifyToken}">

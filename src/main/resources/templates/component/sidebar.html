@@ -3,8 +3,12 @@
       xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <link rel="stylesheet" th:href="@{/css/style.css}"/>
 <div th:fragment="profileSidebar">
-    <div id="sidebar" class="sidebar row fs-4">
-        <button class="col-12" onclick="closeSidebar()"><<</button>
+    <div id="sidebar"
+         class="sidebar row fs-4"
+    >
+        <div class="col-12 d-flex">
+            <button class="col-2 " style="background-color: initial;" onclick="closeSidebar()"><<</button>
+        </div>
         <!--        <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar()">&times;</a>-->
         <th:block th:if="${session.userData!=null}">
             <div class="text-center mb-4">
@@ -17,6 +21,11 @@
                     <p><strong>Email </strong> <br/><span th:text="${session.userData.email}"></span></p>
                     <p><strong>Country </strong> <br/><span th:text="${session.userData.country}"></span></p>
                     <p><strong>Product </strong><br/><span th:text="${session.userData.product}"></span></p>
+                    <a href="/logout">
+                        <button>
+                            logout
+                        </button>
+                    </a>
                 </div>
             </div>
         </th:block>
@@ -59,11 +68,6 @@
             <p>you didn't follow any artist</p>
         </th:block>
 
-        <a href="/logout">
-            <button class="w-100">
-                logout
-            </button>
-        </a>
 
     </div>
 </div>

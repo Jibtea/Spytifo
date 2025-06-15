@@ -7,7 +7,6 @@
   <title layout:title-pattern="$LAYOUT_TITLE - My App">My App</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <link rel="stylesheet" th:href="@{/css/custom-bootstrap.css}"/>
-  <link rel="stylesheet" th:href="@{/css/header.css}"/>
 </head>
 <style>
   .sidebar {
@@ -16,20 +15,36 @@
     left: 0;
     width: 0%; /* เริ่มต้นปิดไว้ */
     height: 100%;
-    background-color: #111;
+    background-color: rgba(17, 17, 17, 0.7);
+    /*background-color: #111;*/
+    /*opacity: 0.6;*/
     overflow-x: hidden;
     transition: 0.3s;
     z-index: 1000;
+  }
+  #banner {
+    transition: height 0.5s ease, opacity 0.5s ease;
+    overflow-y: hidden;
   }
 </style>
 <body>
 <header>
   <link rel="icon" type="image/x-icon" th:href="@{/favicon.png}" />
-  <div class="header" th:insert="~{/component/header::header}"></div>
+  <div id="header" class="header" th:insert="~{/component/header::header}"></div>
 </header>
+<div class="sidebar"  style="z-index: 9999" th:insert="~{/component/sidebar::profileSidebar}"></div>
 
-<div class="sidebar" th:insert="~{/component/sidebar::profileSidebar}"></div>
-<script>
+<main layout:fragment="content" class="fs-17" style="padding-top: 30px; margin-bottom: 20%; ">
+    <!-- เนื้อหาหน้าย่อยจะมาแทรกตรงนี้ -->
+</main>
+
+<div id="cdPlayer" th:replace="component/cdPlayer" ></div>
+<!--<footer>-->
+<!--  <div th:replace="component/cdPlayer"></div>-->
+<!--</footer>-->
+</body>
+
+<script th:inline="javascript">
   function openSidebar() {
     // const sidebar = document.getElementById("sidebar");
     document.getElementById("sidebar").style.width = "40vw";
@@ -37,15 +52,9 @@
   function closeSidebar(){
     document.getElementById("sidebar").style.width = "0vw";
   }
+
+
+  // console.log("siajdjojd22222");
 </script>
 
-<main layout:fragment="content" class="fs-17" style="padding-top: 30px; margin-bottom: 20%;">
-    <!-- เนื้อหาหน้าย่อยจะมาแทรกตรงนี้ -->
-</main>
-
-<div th:replace="component/cdPlayer"></div>
-<!--<footer>-->
-<!--  <div th:replace="component/cdPlayer"></div>-->
-<!--</footer>-->
-</body>
 </html>

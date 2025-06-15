@@ -12,7 +12,9 @@
      min-height: 10vh;
      border-radius: 0% 0% 50px 0%;
      position: fixed;
-     top: 0;"
+     top: 0;
+     z-index: 9990;
+"
 >
 
     <!--user or login page -->
@@ -36,13 +38,19 @@
         </th:block>
     </div>
 
+<!--&lt;!&ndash;  recommend  &ndash;&gt;-->
+<!--    <div>-->
+<!--        <button onclick="openBanner()">***</button>-->
+<!--    </div>-->
+
     <!--spotify , logo link -->
     <div class="d-flex align-items-center gap-2 ml-2">
         <a href="https://developer.spotify.com/" class="d-none d-md-block text-white text-decoration-none">Spitifo</a>
         <img src="https://img.icons8.com/ios11/512/F25081/spotify.png"
              alt="spotifyLOGO"
              class="img-fluid"
-             style="max-height: 60px;"
+             style="max-height: 60px;
+             cursor: pointer;"
         />
     </div>
 

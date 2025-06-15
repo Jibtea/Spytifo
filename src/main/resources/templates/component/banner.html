@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    /*.banner {*/
+    /*    position: fixed;*/
+    /*    top: 0px; left: 0px;*/
+    /*    width: 90vw; !* เริ่มต้นopenไว้ *!*/
+    /*    height: 20vh;*/
+    /*    background-color: #111;*/
+    /*    overflow-x: hidden;*/
+    /*    transition: 0.3s;*/
+    /*    !*border-radius: 10%;*!*/
+    /*    z-index: 1000;*/
+    /*}*/
+
+    #banner {
+        transition: height 0.5s ease, opacity 0.5s ease;
+        overflow-y: hidden;
+    }
+
+</style>
+
+<!--============== carousel ================-->
+<div th:fragment="banner" id="banner" class="show">
+    <!--  ========================= เลื่อนจากbootstrap carousel slide ปรับเวลา data-bs-interval ===========================  -->
+    <div id="bannerCarousel"
+         class="carousel slide"
+         style="position: relative;
+margin: 10px;
+height: 30vh"
+         data-bs-ride="carousel"
+         data-bs-interval="3000">
+
+        <!-- ปุ่ม X -->
+<!--        <button onclick="closeBanner()"-->
+<!--                style="-->
+<!--            position: absolute;-->
+<!--            top: 2px;-->
+<!--            right: 2px;-->
+<!--            z-index: 10;-->
+<!--            background-color: transparent;-->
+<!--            border: none;-->
+<!--            font-size: 50px;-->
+<!--            color: white;-->
+<!--            -->
+<!--          ">-->
+<!--            &times;-->
+<!--        </button>-->
+
+
+        <div class="carousel-inner" id="banner-tracks">
+            <!-- songlisttttttttttttttttt -->
+        </div>
+        <!--  =============== bootstrap 4 -> <a> :: 5 -> <button>      -->
+        <button class="carousel-control-prev"
+                type="button"
+                style="top: 50%; transform: translateY(-50%); background-color: transparent;"
+                data-bs-target="#bannerCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+
+        <button class="carousel-control-next"
+                type="button"
+                style="top: 50%; transform: translateY(-50%); background-color: transparent;"
+                data-bs-target="#bannerCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        const loadBannerTracks = () => {
+            fetch('/api/playlistItem')
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to fetch reccomended playlist");
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("song", data);
+                    const container = document.getElementById("banner-tracks");
+                    container.innerHTML = "";
+
+                    data.forEach((item, index) => {
+                        const track = item.track;
+
+                        const div = document.createElement("div");
+                        div.classList.add("carousel-item");
+                        if (index === 0) div.classList.add("active");
+
+// ใช้ style background image + overlay text
+                        div.innerHTML = `
+                       <div class="d-flex align-items-center justify-content-center text-white track-overlay"
+                        style="
+                                height: 30vh;
+                                background-image: url('${track.album.images[0].url}');
+                                background-size: cover;
+                                background-position: center;
+                        ">
+                    <div class="text-center bg-dark bg-opacity-50 p-3 rounded">
+                    <p class="mb-1 fs-4"><strong>${track.name}</strong></p>
+                    <p class="mb-0 fs-5">${track.artists[0].name}</p>
+                    <button type="button"
+                    value="${track.uri}"
+                    style="
+                    background-color: transparent; border: none;"
+
+                    onclick="collectThisTrack(this)" >Listen this song</button>
+                    </div>
+                    </div>
+                    `;
+
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error loading banner:", error);
+                });
+        };
+
+        document.addEventListener("DOMContentLoaded", loadBannerTracks);
+
+
+        // const collectThisTrack = (button) => {
+        //     const trackUrl = button.value;
+        //     const deviceId = window.device_ids;
+        //     console.log("deviceID = ",deviceId);
+        //     console.log(trackUrl);
+        //     fetch(`/api/collectTrack?trackUrl=${trackUrl}&deviceId=${deviceId}`, {
+        //         method: "POST",
+        //         headers: {"Content-Type": "application/json"},
+        //     }).then(console.log("collected"))
+        //         .catch(error => console.error('Error : ', error));
+        // }
+
+        function openBanner(){
+            document.getElementById("banner").style.display = "none";
+        }
+
+        function closeBanner(){
+            document.getElementById("banner").style.display = "block";
+            console.log("closeBAnner")
+        }
+    </script>
+
+</div>

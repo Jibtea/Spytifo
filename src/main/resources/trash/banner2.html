@@ -1,0 +1,224 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .listImg {
+            width: 25vw;
+            height: 25vw;
+        }
+
+        /*body {*/
+        /*    font-size: 1.5vw;*/
+        /*}*/
+
+        @media (max-width: 992px) {
+            .listImg {
+                width: 20vh;
+                height: 20vh;
+            }
+
+            /*body {*/
+            /*    font-size: 1.5vh;*/
+            /*}*/
+        }
+    </style>
+</head>
+<body>
+<!--<div th:replace="index :: header"/>-->
+
+<main layout:fragment="content" class="container fs-4">
+    <div  class="collapse show banner container-fluid px-0" th:insert="~{/component/banner::banner}"></div>
+    <form id="form" class="collapse row">
+        <!--<form id="form">-->
+        <div class="col-12 row">
+            <label for="typeinput" class="col-12 col-md-6">Choese your top type</label>
+            <select
+                    type="type"
+                    id="typeinput"
+                    name="type"
+                    required
+                    oninvalid="this.setCustomValidity('Please Select Query type')"
+                    oninput="this.setCustomValidity('')"
+                    onchange="updateType()"
+                    class="col-12 col-md-6"
+            >
+                <option value="" disabled selected hidden>-- Select Query Type --</option>
+                <option value="tracks">Tracks</option>
+                <option value="artists">Artists</option>
+            </select>
+        </div>
+
+        <div class="col-12 row">
+            <label for="limitinput" class="col-12 col-md-6">limit songs:</label>
+            <input
+                    type="limit"
+                    id="limitinput"
+                    name="limit"
+                    min="1"
+                    max="50"
+                    required
+                    oninvalid="this.setCustomValidity('Please input number between 1-50')"
+                    oninput="this.setCustomValidity('')"
+                    class="col-12 col-md-6"
+
+            />
+        </div>
+        <button
+                type="button" id="button"
+                onclick="getTopItem()"
+                class="col-12"
+        >
+            let's watch your top ...</button>
+    </form>
+
+    <div class="text-center my-3">
+        <button onclick="toggleCollapse()">Toggle Banner / Form</button>
+    </div>
+
+    <script>
+        function toggleCollapse() {
+            const banner = document.getElementById('banner');
+            const form = document.getElementById('form');
+
+            const bannerCollapse = bootstrap.Collapse.getOrCreateInstance(banner);
+            const formCollapse = bootstrap.Collapse.getOrCreateInstance(form);
+
+            if (banner.classList.contains('show')) {
+                bannerCollapse.hide();
+                formCollapse.show();
+            } else {
+                bannerCollapse.show();
+                formCollapse.hide();
+            }
+        }
+    </script>
+
+
+
+
+    <th:block th:if="${session.spotifyToken}">
+
+        <div id="items"
+             class="d-flex flex-column justify-content-center align-items-center"
+             style="margin-bottom: 500px;"
+        >
+            <p>Please choose query type</p>
+        </div>
+
+        <script th:inline="javascript">
+
+            const getTopItem = () => {
+                const type = document.getElementById('typeinput').value;
+                const limit = document.getElementById('limitinput').value;
+                fetch(/*[[@{/api/topItem}]]*/'', {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        type: type,
+                        limit: limit
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        const container = document.getElementById("items");
+                        container.innerHTML = ""; // ล้างของเก่าออกก่อน
+
+                        if (type === 'artists') {
+                            data.forEach((artist, index) => {
+                                const div = document.createElement("div");
+                                div.classList.add("text-center", "m-2", "p-2", "listDiv");
+
+                                div.innerHTML =
+                                    `
+                                <p>${index + 1}</p>
+                                <img src="${artist.images[0].url}"
+                                alt="artist Image" class="listImg mb-3"
+
+                                />
+                                <p>Name:<span>${artist.name}</span></p>
+                                <p>Genres: ${artist.genres.join(' ')}</p>
+                                <p>Popularity: <span>${artist.popularity}</span></p>
+                                <p><a href="${artist.uri}">Listen again</a></p>
+                       `;
+                                container.appendChild(div);
+                            });
+                        } else {
+                            data.forEach((song, index) => {
+                                const div = document.createElement("div");
+                                div.classList.add("text-center", "m-2", "p-2", "listDiv");
+
+                                div.innerHTML =
+                                    `
+                            <p>${index + 1}</p>
+                            <img
+                            src="${song.album.images[0].url}"
+                            alt="album image"
+                            class="listImg mb-3"
+                            />
+                            <p>Name: <span>${song.name}</span></p>
+                            <p>Artist: ${song.artists.map(artist => artist.name).join(', ')} </p>
+                            <p>Album: <span>${song.album.name}</span></p>
+                            <p><a href="${song.external_urls.spotify}">Open in spotify</a></p>
+                            <button type="button" value="${song.uri}" onclick="collectThisTrack(this)" >Listen this song</button>
+                            `
+                                ;
+                                container.appendChild(div);
+                            });
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Please put correct type query and limit");
+                    });
+
+            }
+
+            $(() => {
+                console.log(/*[[${Type}]]*/ '')
+                console.log(/*[[${Items}]]*/ '')
+            });
+
+            function updateType() {
+                const selectType = document.getElementById("typeinput").value;
+                const button = document.getElementById("button");
+                button.textContent = `Let's check your top ${selectType}`
+            }
+
+            const collectThisTrack = (button) => {
+                const trackUrl = button.value;
+                const deviceId = window.device_ids;
+                console.log("deviceID = ",deviceId);
+                console.log(trackUrl);
+                fetch(`/api/collectTrack?trackUrl=${trackUrl}&deviceId=${deviceId}`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                }).then(console.log("collected"))
+                    .catch(error => console.error('Error : ', error));
+            }
+        </script>
+
+    </th:block>
+
+
+    <th:block th:unless="${session.spotifyToken}">
+        <p class="d-flex flex-column justify-content-center align-items-center">please Login</p>
+        <a href="/login" class="d-flex flex-column justify-content-center align-items-center">
+            <button>login</button>
+        </a>
+    </th:block>
+</main>
+</body>
+</html>

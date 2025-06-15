@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<link rel="stylesheet" th:href="@{/css/style.css}">
+<link rel="stylesheet" th:href="@{/css/custom-bootstrap.css}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        section {
+            height: 100vh;
+            padding: 2rem;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .btn-group .btn.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<main layout:fragment="content">
+<!--    <div th:insert="component/artistTable"></div>-->
+<!--    <div th:insert="component/trackTable"></div>-->
+    <div class="btn-group m-3" role="group" aria-label="Scroll Buttons">
+        <button type="button" class="btn btn-outline-primary" data-target="section1">1</button>
+        <button type="button" class="btn btn-outline-primary" data-target="section2">2</button>
+        <button type="button" class="btn btn-outline-primary" data-target="section3">3</button>
+    </div>
+
+    <!-- เนื้อหาแต่ละ section -->
+    <section id="section1" class="bg-light">Section 1</section>
+    <section id="section2" class="bg-secondary text-white">Section 2</section>
+    <section id="section3" class="bg-success text-white">Section 3</section>
+
+    <script>
+        const buttons = document.querySelectorAll('.btn-group .btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // ลบ active ออกจากปุ่มอื่น
+                buttons.forEach(btn => btn.classList.remove('active'));
+
+                // เพิ่ม active ให้ปุ่มที่ถูกคลิก
+                button.classList.add('active');
+
+                // Scroll ไปยัง section ที่ต้องการ
+                const targetId = button.getAttribute('data-target');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+
+</main>
+</body>
+</html>

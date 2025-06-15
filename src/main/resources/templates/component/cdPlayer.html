@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" th:href="@{/css/style.css}"/>
 <link rel="stylesheet" th:href="@{/css/cdPlayer.css}"/>
-<div th:fragment="cdPlayer" class="cd-player-bar d-flex align-items-center text-white fs-4">
+<div th:fragment="cdPlayer" id="cdPlayer" class="cd-player-bar d-flex align-items-center text-white fs-4">
     <!--============= CD Player =================== -->
     <div id="cd" class="d-flex justify-content-center align-items-center" style="flex: 1 1 0;">
         <div class="CD" style="max-width: 400px;">
@@ -37,6 +37,22 @@
 
     <!-- ช่องที่ 3 -->
     <div class="track-next d-flex flex-column text-center align-items-center justify-content-center" style="flex: 1 1 0;">
+        <!-- ปุ่ม X -->
+<!--        <button onclick="closeCDplayer()"-->
+<!--                style="-->
+<!--            position: absolute;-->
+<!--            top: 2px;-->
+<!--            right: 2px;-->
+<!--            z-index: 10;-->
+<!--            background-color: transparent;-->
+<!--            border: none;-->
+<!--            font-size: 50px;-->
+<!--            color: white;-->
+<!--          ">-->
+<!--            &times;-->
+<!--        </button>-->
+
+
         <p class="m-0">next track</p>
         <img id="nextTrackImg" src="https://img.icons8.com/ios11/512/F25081/spotify.png" width="80" height="80"/>
         <div class="marquee-container mx-auto">

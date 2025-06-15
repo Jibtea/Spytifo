@@ -1,0 +1,187 @@
+.listImg {
+    width: 25vw;
+    height: 25vw;
+}
+
+/*body {*/
+/*    font-size: 1.5vw;*/
+/*}*/
+
+@media (max-width: 992px) {
+    .listImg {
+        width: 20vh;
+        height: 20vh;
+    }
+
+    /*body {*/
+    /*    font-size: 1.5vh;*/
+    /*}*/
+}
+
+.toggle-btn {
+    background-color: #f05080;
+    color: white;
+    border: none;
+    height: 50px;
+    transition: 0.2s ease;
+    border-radius: 0;
+    opacity: 0.5; /* default สีอ่อนลง */
+}
+
+.toggle-btn.active {
+    opacity: 1; /* ถ้า active ให้ชัด */
+}
+
+/* ซ่อนด้วย opacity + max-height */
+#top-section, #form, #banner {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 1s ease, opacity 1s ease;
+}
+
+#top-section.show, #form.show, #banner.show {
+    max-height: 500px;
+    opacity: 1;
+    z-index: 200;
+}
+
+
+
+
+
+
+
+
+/*===========table===============*/
+table.dataTable {
+    table-layout: fixed;         /* ทำให้คอลัมน์แต่ละช่องกว้างเท่ากับ header */
+    width: 100% !important;
+    text-align: center;          /* จัด text ตรงกลาง */
+}
+
+table.dataTable th,
+table.dataTable td {
+    text-align: center;          /* จัดข้อความตรงกลาง */
+    vertical-align: middle;     /* จัดแนวดิ่งตรงกลาง */
+    white-space: nowrap;        /* ป้องกันการขึ้นบรรทัดใหม่ */
+    overflow: hidden;
+    text-overflow: ellipsis;    /* แสดง ... ถ้าข้อมูลยาวเกิน */
+    background-color: rgba(26, 29, 32, 0.65);
+}
+
+table.dataTable th{
+    /*border-radius: 50px 0 0 50px;*/
+    background-color: rgba(26, 29, 32);
+}
+/*-------------th อันเน้หัวตารางนาน้า-----------*/
+/* มุมซ้ายบนล่างน้าหนูๆ */
+table.dataTable thead tr th:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin-bottom: 25px;
+}
+
+/* มุมขวาบนล่างน้าจ้ะ */
+table.dataTable thead tr th:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    margin-bottom: 25px;
+}
+
+/*--------------tr tr ลูกๆนั่เอง----------------*/
+
+
+/* มุมซ้ายบน-ล่าง */
+table.dataTable tbody tr td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 60px;
+}
+
+/* มุมขวาบน-ล่าง */
+table.dataTable tbody tr td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 40px;
+}
+
+
+/*--------------------*/
+
+/* ความสวยงามของ length menu */
+.dataTables_length label {
+    color: #ffffff;
+}
+.dataTables_length select {
+    background-color: #222;
+    color: #ffffff;
+    border: 1px solid #444;
+}
+.dataTables_length select:focus {
+    outline: none;
+    border: 1px solid #ff69b4;
+    box-shadow: 0 0 10px #ff69b4;
+}
+
+/* ความสวยงามของช่อง search */
+.dataTables_filter label {
+    color: #f05080;
+}
+.dataTables_filter input {
+    background-color: #222;
+    color: #ffffff;
+    border: 1px solid #444;
+}
+.dataTables_filter input:focus {
+    outline: none;
+    border: 1px solid #ff69b4;
+    box-shadow: 0 0 10px #ff69b4;
+    background-color: #515151;
+}
+
+/*============= ปุ่ม pagination แร้วเป็ฯ ui li งง ทำทำไม งง==============*/
+/* ปุ่ม li ที่เป็น paginate_button */
+.dataTables_paginate ul.pagination li.paginate_button {
+    background-color: #222 !important;
+    border: 1px solid #444;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+/* สีข้อความในลิงก์ (ถ้ามี a ข้างใน) */
+.dataTables_paginate ul.pagination li.paginate_button a {
+    color: #ffffff !important;
+    background-color: transparent !important; /* ถ้าต้องการล้าง bg สี */
+    text-decoration: none;
+    display: block; /* ให้เต็มพื้นที่ li */
+    padding: 5px 10px; /* ปรับขนาดตามต้องการ */
+}
+
+/* ปุ่ม active (หน้าแสดงตอนนี้) */
+.dataTables_paginate ul.pagination li.paginate_button.active,
+.dataTables_paginate ul.pagination li.paginate_button.current {
+    background-color: #f05080 !important;
+    border: 1px solid #ff69b4 !important;
+    box-shadow: 0 0 8px #ff69b4 !important;
+}
+
+/* Hover ปุ่ม */
+.dataTables_paginate ul.pagination li.paginate_button:hover a {
+    color: #f05080 !important;
+    background-color: #474747 !important;
+    border: 1px solid #ff69b4 !important;
+    box-shadow: 0 0 8px #ff69b4 !important;
+}
+
+
+/*---------------*/
+
+
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_length {
+    color: white;
+}
+
+
+button:hover{
+    background-color: rgba(0, 0, 0, 0.8);
+}

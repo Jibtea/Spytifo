@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- jQuery (DataTables ต้องใช้) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap Bundle JS (รวม Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables CSS สำหรับ Bootstrap 5 -->
+<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<!-- DataTables Bootstrap 5 integration -->
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+
+<!--===========================================================================-->
+<div th:fragment="artistTable">
+  <table id="artistTable" class="dataTable table table-dark" style="min-width: 100%; font-size: 1rem; border-collapse: separate; border-spacing: 0;">
+    <thead>
+    <tr>
+      <th>Image</th>
+      <th>Name</th>
+      <th>Genres</th>
+      <th>Followers</th>
+      <th>Spotify</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+
+</div>
+
+<!--
+  <script th:inline="javascript">
+    let table = $('#myTable').DataTable({
+      columns: [
+        {data: 'name'},
+        {data: 'followers',render: followers => followers.total},
+        {data: 'popularity'},
+        {data: 'genres', render: genres => genres.join(', ')}  // สมมติ genres เป็น array
+      ]
+    });
+
+    fetch('/api/topItem', {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ type: 'artists', limit: 10 }) // ปรับตามต้องการ
+    })
+            .then(response => response.json())
+            .then(data => {
+              $('#myTable').DataTable({
+                data: data,
+                destroy: true, // สำคัญถ้า reload ซ้ำ
+                columns: [
+                  { data: 'name', title: 'Name' },
+                  {
+                    data: 'genres',
+                    title: 'Genres',
+                    render: function(data) {
+                      return data.join(', ');
+                    }
+                  },
+                  {
+                    data: 'followers.total',
+                    title: 'Followers',
+                    render: function(data) {
+                      return data.toLocaleString();
+                    }
+                  },
+                  { data: 'popularity', title: 'Popularity' },
+                  {
+                    data: 'external_urls.spotify',
+                    title: 'Spotify',
+                    render: function(data) {
+                      return `<a href="${data}" target="_blank">Link</a>`;
+                    }
+                  }
+                ]
+              });
+            })
+            .catch(error => console.error('Error:', error));
+
+  </script>
+-->
